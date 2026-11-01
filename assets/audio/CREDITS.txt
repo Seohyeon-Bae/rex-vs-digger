@@ -1,0 +1,80 @@
+티라노 vs 포크레인 — v1.8.0 사운드
+
+효과음은 CC0 Foley 샘플을 잘라 음량을 맞추고 필요한 소리만 짧게 겹쳐 제작했습니다.
+이전 시험판의 합성 타격음과 합성 포효는 사용하지 않습니다.
+발 구름·타격·금속 충격·공기 이동·기계 동작은 아래 CC0 팩에서 가져왔습니다.
+특정 공룡이나 포크레인을 실제로 녹음한 소리라고 표시하지 않습니다.
+
+1. Kenney — Impact Sounds 1.0
+   제작·배포: Kenney (www.kenney.nl)
+   출처: https://kenney.nl/assets/impact-sounds
+   라이선스: Creative Commons Zero (CC0 1.0)
+   https://creativecommons.org/publicdomain/zero/1.0/
+   원본 팩의 License.txt는 KENNEY-LICENSE.txt로 함께 제공합니다.
+   사용 파일: footstep_concrete_000~004, impactSoft_heavy_000~002,
+   impactPunch_heavy_000~004, impactMetal_heavy_000~002,
+   impactPlate_heavy_000~002, impactPlate_light_000~002.
+
+2. rubberduck — 100 CC0 SFX
+   출처: https://opengameart.org/node/85570
+   라이선스: Creative Commons Zero (CC0 1.0)
+   제작자는 이 팩을 Android 기기로 녹음했다고 설명합니다.
+   사용 파일: machine_03.ogg, explosion.ogg.
+
+3. rubberduck — 100 CC0 SFX #2
+   출처: https://opengameart.org/content/100-cc0-sfx-2
+   라이선스: Creative Commons Zero (CC0 1.0)
+   사용 파일: sfx100v2_air_02.ogg, sfx100v2_air_03.ogg,
+   sfx100v2_metal_hit_01.ogg, sfx100v2_stones_01~03.ogg,
+   sfx100v2_loop_machine_01.ogg.
+
+CC0 자료는 수정·게임 포함·재배포가 허용됩니다. 감사의 뜻으로 제작자를 표기합니다.
+출력별 원본 파일과 처리, SHA-256은 manifest.json에 기록했습니다.
+처리: 무음 정리, 짧은 가장자리 페이드, 음량 조절, 일부 겹침.
+기계 배경에는 약한 저역 통과 필터를 사용했습니다. 추가 전자 발진음은 섞지 않았습니다.
+재현 소스: scripts/prepare-recorded-audio.py 및 scripts/audio-source/.
+
+4. roman_cgr — Lion lament
+   출처: https://freesound.org/people/roman_cgr/sounds/223978/
+   라이선스: Creative Commons Zero (CC0 1.0)
+   Sennheiser K6와 Zoom H4N으로 녹음한 사자 음성입니다.
+   원본: lion-lament-roman-cgr.mp3 (공식 고음질 공개 미리듣기).
+
+5. stratcat322 — lion_growls.wav
+   출처: https://freesound.org/people/stratcat322/sounds/270383/
+   라이선스: Creative Commons Zero (CC0 1.0)
+   위 roman_cgr 사자 녹음을 잘라 재배열하고 깊이를 더한 편집본입니다.
+   원본: lion-growls-stratcat322.mp3 (공식 고음질 공개 미리듣기).
+
+현재 공룡 음성은 이 사자 녹음 두 종을 기반으로 제작했습니다.
+호흡과 거친 목소리를 남기고 음역을 낮춘 뒤 같은 녹음의 저음 층으로 흉곽 울림을 더했습니다.
+피격음은 약 0.7초, 으르렁거림은 1.7~2초, 포효는 2.4~2.8초입니다.
+이전 개·사람 수행 음성 층은 현재 게임의 크리처 자산에서 제외했습니다.
+   실제 티라노사우루스 녹음이라고 표현하지 않습니다.
+   재현 소스: scripts/prepare-predator-voice.py.
+
+6. Discrete — Concrete_demolition.wav
+   출처: https://freesound.org/people/Discrete/sounds/70983/
+   라이선스: Creative Commons Zero (CC0 1.0)
+   Case 프런트 로더·백호가 콘크리트를 적재하는 실제 현장 녹음입니다.
+   녹음 장비: Rode NT3 → Sound Devices 702.
+   공식 고음질 공개 MP3에서 엔진이 주가 되는 네 구간을 사용했습니다.
+   파일: engine-1.wav, engine-2.wav, engine-rev-1.wav, engine-rev-2.wav.
+   원래 피치·속도를 유지하고 초저역 정리, 약한 필터, 160ms 페이드와 음량 조절을 적용했습니다.
+   전자 모터·경적·합성 박동을 추가하지 않았습니다.
+   재현 소스: scripts/prepare-heavy-engine.py. 원본 구간과 SHA-256은 manifest.json에 기록했습니다.
+배경음은 가까운 기계 일부를 대표하여 간헐적으로 재생하며 개체별 상시 루프는 만들지 않습니다.
+
+음악: Rockin_140.wav — BaDoink
+출처: https://freesound.org/people/BaDoink/sounds/568755/
+라이선스: Creative Commons Zero (CC0 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/
+약 47.93초 · 140 BPM · 제작자가 공개한 헤비 록 루프.
+제작자는 Zoom R8, Ibanez/LTD 기타와 Hydrogen 드럼 소프트웨어 사용을 명시했습니다.
+베이스·기타·드럼으로 이루어진 기존 음악이며, 게임에서 새로 합성한 곡이 아닙니다.
+공식 고음질 공개 MP3를 받아 게임에 포함했습니다. 외부 핫링크로 재생하지 않습니다.
+처리: 모노·24kHz PCM 변환, 음량 정규화. 편곡·템포·피치는 변경하지 않았습니다.
+CC0에 따라 수정·게임 포함·재배포가 허용됩니다. 감사의 뜻으로 저작자를 표시합니다.
+파일: rockin-140-score.wav. 다운로드 주소와 SHA-256은 manifest.json에 기록했습니다.
+이전 시험용 생성 음악은 활성 자산에서 제거했습니다.
+형식: 24kHz, mono, signed 16-bit PCM WAV.

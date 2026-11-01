@@ -1,0 +1,37 @@
+/* Camera modes and skill status share the battlefield's sage/amber palette. */
+.camera-controls{align-items:center;gap:5px}.camera-controls button,.camera-controls .auto-follow{display:flex;align-items:center;justify-content:center;gap:5px;width:auto;min-width:82px;height:39px;padding:5px 8px;background:#25332be8;color:#adbaa7;border:1px solid #8e9f8670;border-radius:7px;box-shadow:0 2px 6px #13201422;transition:background .1s,color .1s}
+.camera-controls button svg,.camera-controls .auto-follow svg{width:19px;height:19px;flex:none;stroke-width:1.8}.camera-label{font-size:10px;text-align:left;white-space:nowrap;line-height:1.1}.camera-label em{display:block;margin-top:3px;font-size:8px;font-weight:700;font-style:normal;letter-spacing:.6px;color:#869681}
+.camera-controls button[aria-pressed=true],.camera-controls .auto-follow[aria-pressed=true]{background:#e2ebd9;color:#3f5635;border-color:#c8d6ba}.camera-controls button[aria-pressed=true] em{color:#587344}.camera-controls button:focus-visible{outline:2px solid #e5eddb;outline-offset:3px}
+.tracked-skill{background:#25342a;border-color:#81947566}.tracked-skill .skill-picture{opacity:.43;filter:grayscale(.35)}.tracked-skill.cooldown .skill-picture{opacity:.3;filter:grayscale(.6)}.tracked-skill .skill-clock{opacity:1}.tracked-skill .skill-clock circle{stroke:#d8bb7c;stroke-width:2.4}.tracked-skill:not(.cooldown) .skill-clock{opacity:0}
+.tracked-skill.ready{border-color:#b6d298;background:#34462c;box-shadow:inset 0 0 0 1px #b6d29822}.tracked-skill.ready .skill-picture{opacity:1;filter:none}.tracked-skill.blocked:not(.cooldown){background:#26332a;border-color:#7c8b7466;box-shadow:none}.tracked-skill.blocked .skill-picture{opacity:.43;filter:grayscale(.35)}
+.tracked-skill.active{background:#665333;border-color:#f0cd87;box-shadow:0 0 7px #ebc97765,inset 0 0 0 1px #f0cd8740}.tracked-skill.active .skill-picture{opacity:1;filter:none}.tracked-skill .skill-active-label{display:none}.tracked-skill.active .skill-active-label{display:block;position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:#f0cd87;color:#493b25;border-radius:3px;padding:1px 3px;font-size:7px;line-height:1.2;white-space:nowrap;z-index:2}.tracked-skills{margin-top:10px}
+.skill-recharge-flash{display:none;pointer-events:none;position:absolute;inset:-4px;border-radius:8px;padding:2px;background:conic-gradient(transparent 0deg,transparent 210deg,#eaffc7 290deg,transparent 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;z-index:3}.just-cooled .skill-recharge-flash{display:block;animation:skill-recharged .65s ease-out both}
+@keyframes skill-recharged{0%{transform:rotate(0deg);opacity:0}15%{opacity:1;box-shadow:0 0 10px #e8ffc4}75%{opacity:1}100%{transform:rotate(360deg);opacity:0}}
+.battlefield:fullscreen .camera-controls,.battlefield.expanded .camera-controls{bottom:65px}.battlefield:fullscreen .tracked-unit,.battlefield.expanded .tracked-unit{bottom:137px}.battlefield:fullscreen .zoom-status,.battlefield.expanded .zoom-status{bottom:111px}
+@media(max-width:760px){.camera-controls button,.camera-controls .auto-follow{min-width:76px;height:35px;padding:4px 6px;gap:4px}.camera-label{font-size:9px}.camera-controls button svg,.camera-controls .auto-follow svg{width:17px;height:17px}.camera-controls{gap:4px}}
+@media(max-width:400px){.camera-controls button,.camera-controls .auto-follow{min-width:69px;padding:4px;gap:3px}.camera-label{font-size:8px}.camera-controls button svg,.camera-controls .auto-follow svg{width:15px;height:15px}.zoom-status{bottom:55px}.tracked-unit{bottom:85px}}
+@media(prefers-reduced-motion:reduce){.just-cooled .skill-recharge-flash{animation:skill-recharged-reduced .5s ease-out both}@keyframes skill-recharged-reduced{0%,100%{opacity:0}30%{opacity:1}}}
+.battlefield:fullscreen .battle-view-options,.battlefield.expanded .battle-view-options{top:auto;bottom:112px;left:12px;right:auto;margin:0;z-index:5}
+.battlefield:fullscreen .zoom-status,.battlefield.expanded .zoom-status{top:auto;bottom:112px;left:auto;right:13px}
+.battlefield:fullscreen .tracked-unit,.battlefield.expanded .tracked-unit{bottom:145px}
+
+/* Compact square camera selectors; tracking retains its independent state. */
+.camera-controls button,.camera-controls .auto-follow,.battlefield:fullscreen .camera-controls button,.battlefield.expanded .camera-controls button{width:40px;min-width:40px;height:40px;padding:6px;gap:0;flex-direction:column;border-radius:7px}.camera-controls #viewHome .camera-label,.camera-controls #viewNext .camera-label{display:none}.camera-controls #viewHome svg,.camera-controls #viewNext svg{width:25px;height:25px}.camera-controls #autoFollow svg{width:20px;height:20px}.camera-controls #autoFollow .camera-label{font-size:0;line-height:1}.camera-controls #autoFollow em{font-size:7px;line-height:1;margin:2px 0 0}.camera-controls{gap:5px}
+.battlefield>.result-overlay{z-index:30}
+.battlefield .battle-view-options,.battlefield:fullscreen .battle-view-options,.battlefield.expanded .battle-view-options{z-index:3}
+/* Expanded battle HUD: corners stay clear of the centered playback bar. */
+:is(.battlefield:fullscreen,.battlefield.expanded){--hud-edge:20px}
+:is(.battlefield:fullscreen,.battlefield.expanded) .scoreboard{top:var(--hud-edge);left:var(--hud-edge);right:var(--hud-edge)}
+:is(.battlefield:fullscreen,.battlefield.expanded) .fullscreen-controls{left:50%;right:auto;bottom:var(--hud-edge);transform:translateX(-50%);margin:0;gap:6px;padding:7px;white-space:nowrap}
+:is(.battlefield:fullscreen,.battlefield.expanded) .camera-controls{right:var(--hud-edge);bottom:var(--hud-edge)}
+:is(.battlefield:fullscreen,.battlefield.expanded) .tracked-unit{left:var(--hud-edge);bottom:var(--hud-edge);top:auto}
+:is(.battlefield:fullscreen,.battlefield.expanded) .battle-view-options{top:110px;right:var(--hud-edge);left:auto;bottom:auto;gap:10px}
+:is(.battlefield:fullscreen,.battlefield.expanded) .zoom-status{right:var(--hud-edge);bottom:70px;left:auto;top:auto}
+@media(max-width:700px){
+ :is(.battlefield:fullscreen,.battlefield.expanded){--hud-edge:12px}
+ :is(.battlefield:fullscreen,.battlefield.expanded) .fullscreen-controls{bottom:12px;gap:4px;padding:5px;max-width:calc(100% - 24px)}
+ :is(.battlefield:fullscreen,.battlefield.expanded) .camera-controls,:is(.battlefield:fullscreen,.battlefield.expanded) .tracked-unit{bottom:74px}
+ :is(.battlefield:fullscreen,.battlefield.expanded) .zoom-status{bottom:124px}
+ :is(.battlefield:fullscreen,.battlefield.expanded) .battle-view-options{top:105px;font-size:10px}
+}
+@media(max-height:450px) and (min-width:701px){:is(.battlefield:fullscreen,.battlefield.expanded) .battle-view-options{top:100px}}

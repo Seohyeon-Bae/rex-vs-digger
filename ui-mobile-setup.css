@@ -1,0 +1,16 @@
+/* Claude 1.9.x 제안: 모바일 매치 설정 요약 줄. ui-theme.css 토큰을 쓰고, 없으면 기본값을 쓴다. */
+html body .setup-summary{grid-column:1/-1;flex:1 1 100%;box-sizing:border-box;display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;min-height:46px;margin:0 0 10px;padding:8px 12px;border:1px solid var(--ui-line,#d5dce5);border-radius:var(--ui-radius,8px);background:var(--ui-panel,#fff);color:var(--ui-text,#27364b);font:inherit;font-size:14px;cursor:pointer;box-shadow:var(--ui-shadow,none)}
+html body .setup-summary[hidden]{display:none}
+html body .setup-summary-text{display:flex;align-items:baseline;gap:6px;min-width:0;flex:1;flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+html body .setup-summary-team{white-space:nowrap;font-size:12px}
+html body .setup-summary-team b{font-size:16px;font-variant-numeric:tabular-nums;margin:0 1px}
+html body .setup-summary-team.team-rex{color:var(--ui-rex-ink,#45602c)}
+html body .setup-summary-team.team-dig{color:var(--ui-dig-ink,#7f5a1e)}
+html body .setup-summary-vs{font-size:11px;font-weight:700;color:var(--ui-muted,#566273)}
+html body .setup-summary-action{flex:none;font-size:12px;font-weight:700;color:var(--ui-accent-strong,#314568)}
+/* 접힘: 요약 줄만 남긴다 */
+html body .setup.is-collapsed>*:not(.setup-summary){display:none!important}
+html body .setup.is-collapsed{padding:8px!important;display:block!important}
+html body .setup.is-collapsed .setup-summary{margin:0;border:0;box-shadow:none;padding:4px 6px}
+
+html body .setup-summary-action{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border:1px solid var(--ui-accent,#71835c);border-radius:var(--ui-radius-sm,6px);background:var(--ui-accent-soft,#e8efdf);color:var(--ui-accent-strong,#3b552b);font-size:13px;font-weight:800;line-height:1.3;white-space:nowrap}

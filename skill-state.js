@@ -1,0 +1,9 @@
+import {BUFFS,rageUnlimited} from './buffs.js';
+export function skillState(unit,kind,time,total){
+ if(unit.hp<=0)return{remaining:0,active:false,blocked:true,ready:false,ratio:0,label:unit.team==='rex'?'사망':'파괴'};
+ if(kind==='rage'||kind==='overdrive'){const active=unit.buffActive&&unit.buffUntil>time,remaining=Math.max(0,active?unit.buffUntil-time:(unit.nextTechniqueAt[kind]||0)-time),blocked=!active&&(unit.stun>0||unit.heldBy!==null);return{charges:null,remaining,active,blocked,ready:!active&&!blocked&&remaining<=.001,ratio:Math.min(1,remaining/(active?BUFFS[unit.team].duration:Math.max(.1,total))),label:active?'강화 중':remaining>.001?'재사용 대기 중':blocked?'사용 불가':'준비 완료'};}
+ const parry=kind==='parry',unlimited=kind==='ram'&&rageUnlimited(unit,time),remaining=Math.max(0,parry?unit.parryCooldown:unlimited?(unit.ramLockedUntil||0)-time:(unit.nextTechniqueAt[kind]||0)-time),active=parry?(unit.team==='dig'?unit.guardUntil>time&&remaining<=.001:!!unit.action?.defensive||unit.parry>0&&remaining<=.001):unit.action?.kind===kind||unit.aerialAttack?.kind===kind;
+ const blocked=!active&&(unit.cool>0||unit.stun>0||unit.heldBy!==null||!!unit.action||(parry&&unit.y>.4));
+ const charges=parry&&unit.team==='dig'?(time-(unit.lastBucketParryAt??-Infinity)>=1&&!(unit.guardFatigueUntil>time)?10:Math.max(0,10-(unit.guardBlocks||0))):kind==='ram'?(unlimited?null:3-(unit.ramRechargeEnds||[]).filter(end=>end>time).length):kind==='tail'?2-(unit.tailRechargeEnds||[]).filter(end=>end>time).length:null;
+ return{charges,unlimited,remaining,active,blocked,ready:!active&&!blocked&&remaining<=.001,ratio:Math.min(1,remaining/Math.max(.1,total)),label:(active?(parry?'방어 중':unit.action?.evasion?'회피 중':unit.action?.defensive?'패링 시도':'사용 중'):remaining>.001?(parry?'방어 회복 중':'재사용 대기 중'):blocked?(unit.hardStunUntil>time?'스턴 중':unit.stun>0?'경직 중':'공격 대기 중'):'준비 완료')+(unlimited?' · 충전 무제한':'')};
+}

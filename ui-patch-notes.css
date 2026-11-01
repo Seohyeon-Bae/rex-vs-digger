@@ -1,0 +1,22 @@
+/* Claude 1.9.x 제안: 업데이트 내역. ui-theme.css 토큰을 쓰고, 없으면 기본값. */
+html body .patch-dialog .patch-intro{font-size:13px;line-height:1.6;color:var(--ui-muted,#566273)}
+html body .patch-dialog details.patch-release>summary{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+html body .patch-dialog .patch-count{margin-left:auto;font-size:11px;color:var(--ui-muted,#566273);font-variant-numeric:tabular-nums;white-space:nowrap}
+html body .patch-dialog .patch-body ul{margin:4px 0 12px;padding-left:18px}
+html body .patch-dialog .patch-body li{font-size:13px;line-height:1.7;margin:3px 0;color:var(--ui-text,#27364b)}
+
+/* 분류 제목 = 색 태그 */
+html body .patch-dialog .patch-body h3.patch-tag{display:inline-flex;align-items:center;margin:14px 0 4px;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid transparent}
+html body .patch-dialog .tag-combat{background:#eef1f6;color:#3f4a59;border-color:#d7dde7}
+html body .patch-dialog .tag-rex{background:var(--ui-rex-soft,#f2f6ec);color:var(--ui-rex-ink,#45602c);border-color:#cfdcbf}
+html body .patch-dialog .tag-dig{background:var(--ui-dig-soft,#faf4e9);color:var(--ui-dig-ink,#7f5a1e);border-color:#ead6b3}
+html body .patch-dialog .tag-view{background:var(--ui-accent-soft,#eef3f9);color:var(--ui-accent-strong,#314568);border-color:#cbd8ea}
+html body .patch-dialog .tag-sound{background:#f4eff9;color:#5a3f7a;border-color:#dccfeb}
+html body .patch-dialog .tag-settings{background:#f1f3f5;color:#4a5462;border-color:#d9dee4}
+
+/* 한눈에 보기 */
+html body .patch-dialog .patch-highlights{margin:4px 0 10px;padding:10px 12px;border-radius:var(--ui-radius,8px);background:#f6f8fb;border:1px solid var(--ui-line-soft,#e6eaf0)}
+html body .patch-dialog .patch-highlights strong{display:block;margin-bottom:6px;font-size:12px;color:var(--ui-accent-strong,#314568)}
+html body .patch-dialog .patch-highlights ul{list-style:none;margin:0;padding:0}
+html body .patch-dialog .patch-highlights li{display:flex;align-items:baseline;gap:8px;margin:5px 0;font-size:13px;line-height:1.55}
+html body .patch-dialog .patch-tag-mini{flex:none;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:700;border:1px solid transparent}

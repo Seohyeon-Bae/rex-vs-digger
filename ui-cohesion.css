@@ -1,0 +1,277 @@
+/* One visual language across the existing game; camera silhouettes stay bare. */
+:root{--bg:var(--ui-bg);--panel:var(--ui-panel);--line:var(--ui-line);--muted:var(--ui-muted);--white:var(--ui-text);--lime:var(--ui-accent);--amber:var(--ui-dig);--font:var(--ui-font)}
+html body{font-family:var(--ui-font);color:var(--ui-text);background:var(--ui-bg)}
+html body :is(.setup,.arena-panel,.intel-card,.rules-note){border-color:var(--ui-line);border-radius:var(--ui-radius)}
+html body :is(dialog,.result-card){font-family:var(--ui-font);color:var(--ui-text);background:var(--ui-panel);border:1px solid var(--ui-line);border-radius:var(--ui-radius);box-shadow:0 12px 36px #15233626}
+html body dialog::backdrop{background:#17253b6b;backdrop-filter:blur(3px)}
+html body :is(.settings-head,.patch-heading){border-color:var(--ui-line-soft);background:var(--ui-panel);padding:16px 20px}
+html body :is(dialog h2,.settings-head h2){font-size:20px;line-height:1.35;font-weight:700;color:var(--ui-text);letter-spacing:-.3px}
+html body dialog h3{font-size:14px;line-height:1.5;font-weight:700;color:var(--ui-text)}
+html body dialog p{line-height:1.65}
+html body :is(.dialog-close,.skill-detail-close){display:inline-grid;place-items:center;flex-shrink:0;min-width:32px;min-height:32px;border:1px solid var(--ui-line);border-radius:var(--ui-radius-sm);background:#f7f9fb;color:var(--ui-muted-strong);box-shadow:none;font-size:20px;line-height:1}
+html body :is(.settings-category-tabs,.character-tabs){display:flex;gap:4px;padding:4px;border:1px solid var(--ui-line-soft);border-radius:var(--ui-radius);background:#f5f7fa}
+html body :is(.settings-category-tabs,.character-tabs) button{min-height:34px;padding:6px 12px;border:1px solid transparent;border-radius:var(--ui-radius-sm);background:transparent;color:var(--ui-muted-strong);font:600 12px var(--ui-font);box-shadow:none}
+html body :is(.settings-category-tabs button[aria-pressed=true],.character-tabs button[aria-selected=true]){background:var(--ui-panel);border-color:var(--ui-line);color:var(--ui-accent-strong);box-shadow:var(--ui-shadow)}
+html body :is(.character-skill,.patch-release,.settings-section){border-color:var(--ui-line-soft);border-radius:var(--ui-radius);background:var(--ui-panel)}
+html body :is(.character-skill-facts,.skill-facts){font-size:12px;line-height:1.65;color:var(--ui-muted-strong);font-variant-numeric:tabular-nums}
+html body .character-skill>p{font-size:13px;line-height:1.65;color:var(--ui-text)}
+html body :is(.patch-intro,.patch-body,.battle-details .muted,.character-view-hint,.character-stat-note){font-size:12px;line-height:1.65;color:var(--ui-muted)}
+html body :is(.settings-actions,.result-actions,.character-view-tools) button{min-height:34px;border-radius:var(--ui-radius-sm);border-color:var(--ui-line);font-family:var(--ui-font);font-size:12px;box-shadow:none}
+html body :is(.character-view-tools button,.settings-actions button:not(.primary),.result-actions button:not(:first-child)){background:var(--ui-panel);color:var(--ui-muted-strong)}
+html body :is(.battle-details table,dialog table){border-collapse:collapse;font-size:12px;line-height:1.5;font-variant-numeric:tabular-nums}
+html body :is(.battle-details th,dialog th){background:#f2f5f9;color:var(--ui-muted-strong);font-weight:600}
+html body :is(.battle-details th,.battle-details td,dialog th,dialog td){padding:8px 10px;border-color:var(--ui-line-soft)}
+html body .unit-table-wrap{max-height:min(58vh,560px);border:1px solid var(--ui-line);border-radius:var(--ui-radius-sm)}
+html body .tracked-unit{border-color:var(--ui-line);border-radius:var(--ui-radius);box-shadow:var(--ui-shadow)}
+html body .tracked-skill-details{border-color:var(--ui-line-soft);font-family:var(--ui-font);color:var(--ui-text)}
+html body .arena-panel>.playback{border-color:var(--ui-line);background:#f7f8fa}
+html body .playback-actions button,html body .speed-options button{border-radius:var(--ui-radius-sm);border-color:var(--ui-line);color:var(--ui-muted-strong);box-shadow:none}
+html body .speed-options button.active,html body .speed-options button[aria-pressed=true]{color:var(--ui-accent-strong);border-color:var(--ui-accent);background:var(--ui-accent-soft)}
+html body .frame-status{border-color:var(--ui-line-soft);border-radius:var(--ui-radius-sm);background:var(--ui-accent-soft);color:var(--ui-muted-strong)}
+html body :is(button,input,select,summary):focus-visible{outline:2px solid var(--ui-accent);outline-offset:2px}
+@media(hover:hover){html body :is(.dialog-close,.skill-detail-close,.character-view-tools button):hover{border-color:var(--ui-accent);background:var(--ui-accent-soft);color:var(--ui-accent-strong)}}
+@media(max-width:760px){
+ html body :is(.settings-head,.patch-heading){padding:12px 14px}
+ html body dialog h2{font-size:18px}
+ html body :is(.settings-category-tabs,.character-tabs) button{padding:6px 8px;min-height:36px;font-size:11px}
+ html body :is(.battle-details th,.battle-details td,dialog th,dialog td){padding:7px 8px}
+}
+
+/* Shared character, settings and HUD language. Pixel art must never inherit line-icon strokes. */
+html body .skill-picture,html body .skill-picture *{stroke:none!important;stroke-width:0!important}
+html body .skill-clock{stroke-width:2}
+html body .skill-icon-mini{width:34px;height:34px;border:1px solid var(--ui-line);border-radius:var(--ui-radius-sm);background:transparent;overflow:hidden}
+html body .skill-icon-mini .skill-picture{display:block;width:32px;height:32px;image-rendering:pixelated}
+html body .kw::after{display:none}
+html body .kw:is(:hover,:focus)::after{display:block}
+#characterDialog{overflow-x:hidden;padding:22px;scrollbar-gutter:stable}
+#characterDialog .character-layout{gap:20px}
+#characterDialog .character-info-panel{min-width:0}
+#characterDialog .character-info-panel :is(h3,p){color:var(--ui-text)}
+#characterDialog .character-info-panel p{font-size:12px;line-height:1.75;overflow-wrap:anywhere}
+#characterDialog .character-skill{padding:12px;margin:10px 0;border:1px solid var(--ui-line-soft);border-radius:var(--ui-radius);background:var(--ui-panel);box-shadow:var(--ui-shadow)}
+#characterDialog .character-skill h3{display:flex;align-items:center;gap:9px;margin:0 0 9px;font-size:14px;line-height:1.5}
+#characterDialog .character-skill h3 small{margin:0 0 0 auto;padding:2px 7px;background:var(--ui-accent-soft);color:var(--ui-accent-strong);border-radius:var(--ui-radius-sm);font-size:10px;white-space:nowrap}
+#characterDialog .character-skill-facts{margin-top:9px!important;padding-top:9px;border-top:1px solid var(--ui-line-soft);font-variant-numeric:tabular-nums;white-space:pre-line}
+#characterDialog .skill-rules{padding:10px 12px;border:1px solid var(--ui-line-soft);border-radius:var(--ui-radius);background:var(--ui-accent-soft);font-size:12px;color:var(--ui-muted-strong)}
+#characterDialog .character-stage{height:310px;border-color:var(--ui-line);background:radial-gradient(ellipse at 45% 35%,#e0e5d0 0%,#9aa589 48%,#5a6753 100%)}
+#characterDialog[data-team=dig] .character-stage{background:radial-gradient(ellipse at 45% 35%,#e5dfd0 0%,#9d9b94 48%,#58616a 100%)}
+#characterDialog .character-stage::before{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#17223333,transparent 45%),repeating-linear-gradient(0deg,transparent 0 39px,#ffffff08 39px 40px);pointer-events:none}
+#characterDialog .character-view-modes{display:flex;gap:4px;padding:4px;margin-top:10px;border:1px solid var(--ui-line-soft);border-radius:var(--ui-radius);background:var(--ui-accent-soft)}
+#characterDialog .character-view-modes button{flex:1;min-height:34px;border:1px solid transparent;border-radius:var(--ui-radius-sm);color:var(--ui-muted-strong);background:transparent;font:600 12px var(--ui-font)}
+#characterDialog .character-view-modes button[aria-pressed=true]{background:var(--ui-panel);border-color:var(--ui-line);color:var(--ui-accent-strong);box-shadow:var(--ui-shadow)}
+#characterDialog .character-view-tools{gap:6px;margin-top:8px}
+#characterDialog .character-view-tools button{min-height:34px;background:var(--ui-panel);border:1px solid var(--ui-line);border-radius:var(--ui-radius-sm)}
+#characterDialog .character-view-hint{font-size:11px;line-height:1.7;color:var(--ui-muted)}
+#characterDialog canvas[data-mode=pan]{cursor:move}
+@media(max-width:600px){#characterDialog{padding:15px 12px}#characterDialog .character-stage{height:240px}#characterDialog .character-skill{padding:10px}#characterDialog .character-view-modes button,#characterDialog .character-view-tools button{min-height:38px}}
+
+/* Unified control affordances without changing the compact battle layout. */
+html body :is(.settings-section,.settings-team-panel,.character-skill,.patch-highlights){border-color:var(--ui-line-soft);border-radius:var(--ui-radius)}
+html body :is(.settings-footer,.settings-actions,.character-view-tools,.result-actions){gap:8px}
+html body :is(.settings-category-tabs,.character-tabs) button[aria-selected=true]{box-shadow:var(--ui-shadow)}
+html body :is(button,summary){-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+html body button:disabled{cursor:default}
+html body :is(dialog,.arena-panel,.setup) button:focus-visible{outline:2px solid var(--ui-accent);outline-offset:2px}
+html body .tracked-skill-details :is(h3,p,.skill-facts){font-family:var(--ui-font)}
+html body .tracked-skill-details .skill-picture{image-rendering:pixelated;border-radius:var(--ui-radius-sm)}
+@media(prefers-reduced-motion:reduce){html body :is(.tracked-skill,.skill-picture,.skill-recharge-flash){animation:none!important;transition:none!important}}
+
+/* Retain compact camera art while keeping its state explicit on touch screens. */
+html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed]{height:36px;position:relative}
+html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed] svg{width:18px!important;height:18px!important;margin-top:0!important}
+html body .camera-controls button#autoFollow[aria-pressed]::before,html body .camera-controls button#directorBtn[aria-pressed]::before{position:absolute;top:1px;left:0;right:0;text-align:center;font:700 6.5px/7px var(--ui-font);letter-spacing:.2px;pointer-events:none}
+html body .camera-controls button#autoFollow[aria-pressed]::before{content:'AUTO'}
+html body .camera-controls button#directorBtn[aria-pressed]::before{content:'DYNAMIC';letter-spacing:0}
+html body .camera-controls button#autoFollow[aria-pressed] .auto-state,html body .camera-controls button#directorBtn[aria-pressed] .director-state{display:block!important;position:absolute;bottom:1px;left:0;right:0;font:700 8px/8px var(--ui-font);text-align:center;pointer-events:none}
+html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed]::after{width:4px;height:4px;top:3px;right:3px}
+@media(max-width:760px),(pointer:coarse){html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed]{width:30px;min-width:30px;height:34px}}
+
+/* Faction showcase: distant skyline, atmospheric light, grounded model. */
+#characterDialog .character-stage{isolation:isolate;background:radial-gradient(ellipse at 42% 24%,#e2d8ae88,transparent 55%),linear-gradient(180deg,#52615b 0%,#a5ad8e 57%,#74795a 58%,#3c4539 100%);box-shadow:inset 0 0 45px #15261b44}
+#characterDialog[data-team="dig"] .character-stage{background:radial-gradient(ellipse at 70% 18%,#ebbf6e77,transparent 57%),linear-gradient(180deg,#354652,#9babae 57%,#657077 58%,#303c43);box-shadow:inset 0 0 45px #17222c55}
+#characterDialog .character-stage::before{content:'';position:absolute;z-index:0;inset:25% -2% 31%;opacity:.4;background:#283b36;clip-path:polygon(0 100%,0 55%,5% 55%,5% 25%,13% 25%,13% 62%,19% 62%,19% 0,28% 0,28% 38%,35% 38%,35% 70%,43% 70%,43% 22%,48% 22%,48% 52%,58% 52%,58% 12%,67% 12%,67% 65%,75% 65%,75% 32%,84% 32%,84% 70%,92% 70%,92% 44%,100% 44%,100% 100%)}
+#characterDialog[data-team="dig"] .character-stage::before{background:#233846;opacity:.55}
+#characterDialog .character-stage #characterCanvas{position:relative;z-index:1}
+#characterDialog .character-stage>canvas.gpu-world{position:absolute;inset:0;z-index:0;pointer-events:none}
+
+/* Instruction choice follows the input device, including narrow desktop windows. */
+@media(pointer:fine){html body .control-help-pc{display:list-item}html body .control-help-mobile{display:none}}
+
+/* Desktop controls remain square and labels are readable without changing the compact mobile row. */
+@media(min-width:761px) and (pointer:fine){
+ html body .playback-actions button,html body .camera-controls button,html body #battlefield .fullscreen-controls button,html body #battlefield .mobile-dock-row>.camera-controls>button{width:46px!important;min-width:46px!important;height:46px!important;min-height:46px!important;padding:3px!important}
+ html body .playback-actions button svg,html body .camera-controls button svg,html body #battlefield .fullscreen-controls button svg{width:24px!important;height:24px!important}
+ html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed]{height:50px!important;min-height:50px!important}
+ html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed] svg{width:23px!important;height:23px!important;margin-top:0!important}
+ html body .camera-controls button#autoFollow[aria-pressed]::before,html body .camera-controls button#directorBtn[aria-pressed]::before{font-size:9px!important;line-height:11px!important;top:1px!important;letter-spacing:0!important}
+ html body .camera-controls button#autoFollow[aria-pressed] .auto-state,html body .camera-controls button#directorBtn[aria-pressed] .director-state{font-size:10px!important;line-height:11px!important;bottom:1px!important;opacity:1!important}
+ html body .camera-controls .camera-zoom{font-size:10px!important;line-height:11px!important}
+ html body .camera-controls #viewNext .camera-number{font-size:9px!important;min-width:12px!important;height:13px!important}
+ html body .playback-speed button{min-width:36px;min-height:34px;font-size:12px}
+}
+
+html body dialog :is(button,input,select){font-family:var(--ui-font)}
+html body dialog .dialog-close{display:grid;place-items:center;width:32px;height:32px;padding:0;border-radius:var(--ui-radius-sm);font-size:23px;line-height:1}
+html body dialog :is(.character-view-tools button,.settings-footer button){border-radius:var(--ui-radius-sm);font-weight:600}
+html body dialog :is(.character-stat-note,.settings-notice,.settings-help){line-height:1.65}
+@media(min-width:761px) and (pointer:fine){html body .battle-view-options .setting-check{font-size:12px;gap:5px}html body .playback-speed .speed-label{font-size:11px}html body .playback-actions,html body .camera-settings-group{gap:10px}}
+
+/* Bounded information expansion: descriptions never resize the control row. */
+html body #battlefield .tracked-unit .tracked-skill-details{box-sizing:border-box;min-width:0;width:100%;max-width:100%;max-height:min(220px,30dvh);overflow:auto;overscroll-behavior:contain;contain:inline-size;scrollbar-width:thin;padding:10px 38px 10px 12px}
+html body #battlefield .tracked-unit .tracked-skill-details[hidden]{display:none!important}
+html body #battlefield .tracked-skill-details :is(p,.skill-facts,.skill-facts>div){min-width:0;overflow-wrap:anywhere;word-break:keep-all}
+html body #battlefield .tracked-skill-details .skill-facts span{white-space:normal}
+html body #battlefield .tracked-skill-details .skill-facts b{overflow-wrap:anywhere}
+html body #battlefield:is(:fullscreen,.expanded) .battle-view-options .setting-check,html body #battlefield:is(:fullscreen,.expanded) .battle-view-options .setting-check span{color:#fff!important;opacity:1}
+html body #battlefield .tracked-skill-details{background:#223026;color:#e3eddc;border-color:#8d9f8177}
+html body #battlefield .tracked-skill-details h3{color:#f3e4b4}
+html body #battlefield .tracked-skill-details .skill-detail-close{background:transparent;color:#e3eddc;border:1px solid #8d9f8155;border-radius:var(--ui-radius-sm)}
+html body .result-card #resultIcon{display:flex;align-items:center;justify-content:center;width:100%;height:88px;margin:10px auto 6px;background:none;border:0}
+html body .result-card #resultIcon .skill-picture{width:84px;height:84px;image-rendering:pixelated;filter:drop-shadow(0 4px 5px #17253b22)}
+html body .result-card #resultIcon .skill-clock{display:none}
+html body .result-card #resultIcon .draw-symbol{font-size:48px;color:var(--ui-muted)}
+html body :is(.settings-dialog,.character-dialog,.battle-details) :is(input,select){border-radius:var(--ui-radius-sm);font-family:var(--ui-font)}
+html body :is(.settings-help,.character-stat-note,.record-help){color:var(--ui-muted);line-height:1.65}
+@media(max-width:760px),(pointer:coarse){html body #battlefield .tracked-unit .tracked-skill-details{max-height:min(180px,27dvh);padding:8px 34px 8px 10px}html body .result-card #resultIcon{height:64px}html body .result-card #resultIcon .skill-picture{width:64px;height:64px}}
+
+/* Keep mode labels inside their square, independently of other button typography. */
+html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed]{box-sizing:border-box;overflow:hidden!important;isolation:isolate;container-type:inline-size;letter-spacing:0!important}
+html body .camera-controls button#autoFollow[aria-pressed]::before,html body .camera-controls button#directorBtn[aria-pressed]::before{inset:2px 2px auto!important;max-width:calc(100% - 4px);overflow:hidden;white-space:nowrap;box-sizing:border-box;font-family:Arial,sans-serif!important;font-size:clamp(5px,17cqw,8px)!important;line-height:10px!important;letter-spacing:0!important;text-indent:0!important;transform:none!important}
+html body .camera-controls button#autoFollow[aria-pressed] .auto-state,html body .camera-controls button#directorBtn[aria-pressed] .director-state{left:2px!important;right:2px!important;bottom:2px!important;max-width:calc(100% - 4px);overflow:hidden;white-space:nowrap;line-height:10px!important;letter-spacing:0!important;text-indent:0!important}
+html body .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed]::after{top:3px!important;right:3px!important;width:3px!important;height:3px!important;box-shadow:none!important}
+@media(min-width:761px) and (pointer:fine){html body .camera-controls button#autoFollow[aria-pressed]::before,html body .camera-controls button#directorBtn[aria-pressed]::before{font-size:8px!important}}
+
+/* Fullscreen active modes echo the selected unit's four-corner reticle. */
+html body #battlefield:is(:fullscreen,.expanded) .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed] :is(.auto-state,.director-state){display:block!important}
+html body #battlefield:is(:fullscreen,.expanded) .camera-controls button:is(#autoFollow,#directorBtn)[aria-pressed=true]::after{content:''!important;position:absolute!important;inset:1px!important;width:auto!important;height:auto!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;pointer-events:none;background:linear-gradient(currentColor,currentColor) left top/7px 1.5px no-repeat,linear-gradient(currentColor,currentColor) left top/1.5px 7px no-repeat,linear-gradient(currentColor,currentColor) right top/7px 1.5px no-repeat,linear-gradient(currentColor,currentColor) right top/1.5px 7px no-repeat,linear-gradient(currentColor,currentColor) left bottom/7px 1.5px no-repeat,linear-gradient(currentColor,currentColor) left bottom/1.5px 7px no-repeat,linear-gradient(currentColor,currentColor) right bottom/7px 1.5px no-repeat,linear-gradient(currentColor,currentColor) right bottom/1.5px 7px no-repeat!important;opacity:.9!important}
+
+/* Mobile text is real label content, never a second generated caption. */
+@media(max-width:760px),(pointer:coarse){
+ html body #battlefield .mobile-dock-row .view-option-items .setting-check::after{content:none!important;display:none!important}
+ html body #battlefield .mobile-dock-row .camera-controls button:is(#autoFollow,#directorBtn)::before{font-size:clamp(4px,17cqw,6.5px)!important;line-height:6px!important;top:1px!important;bottom:auto!important}
+ html body #battlefield .mobile-dock-row .camera-controls button:is(#autoFollow,#directorBtn) svg{width:12px!important;height:12px!important}
+ html body #battlefield .mobile-dock-row .camera-controls button:is(#autoFollow,#directorBtn) :is(.auto-state,.director-state){font-size:6.5px!important;line-height:6px!important;bottom:1px!important}
+ html body #battlefield .tracked-unit .tracked-body{min-width:0}
+ html body #battlefield .tracked-unit .tracked-skills{min-width:0}
+ html body #battlefield .tracked-skill-slot{min-width:0}
+ html body #battlefield .tracked-skill-details .skill-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+ html body #battlefield .tracked-skill-details .skill-facts>div:not(:has(b)){grid-column:1/-1}
+ html body #battlefield .tracked-skill-details .skill-facts b{font-size:11px}
+}
+/* Portrait phone: playback first, then view settings and camera controls. */
+@media(max-width:599px) and (orientation:portrait){
+ html body .arena-panel>.playback{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:9px 10px}
+ html body .arena-panel>.playback .playback-left{display:flex;width:100%;justify-content:space-between;align-items:center;gap:8px;flex-wrap:nowrap}
+ html body .arena-panel>.playback .playback-actions{gap:4px}
+ html body .arena-panel>.playback .playback-actions button{width:32px;min-width:32px;height:34px;padding:5px}
+ html body .arena-panel>.playback .playback-speed{gap:4px;min-width:0}
+ html body .arena-panel>.playback .speed-label{display:none}
+ html body .arena-panel>.playback .speed-options{display:flex;gap:3px}
+ html body .arena-panel>.playback .speed-options button{min-width:28px;min-height:32px;padding:0 4px;font-size:10px}
+ html body .arena-panel>.playback .battle-secondary-controls{display:flex!important;justify-content:space-between;align-items:center;width:100%;gap:8px;margin:0;padding:7px 0 0;border:0;border-top:1px solid var(--ui-line-soft)}
+ html body .arena-panel>.playback .view-option-items{flex-direction:column;gap:2px!important;align-items:flex-start}
+ html body .arena-panel>.playback .setting-check{min-height:17px!important;font-size:10px!important;line-height:17px;gap:4px}
+ html body .arena-panel>.playback .camera-controls{gap:4px}
+ html body .arena-panel>.playback .camera-controls button{width:36px!important;min-width:36px!important;height:40px!important;min-height:40px!important;padding:0!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-playback-panel{width:calc(100% - var(--mobile-left) - var(--mobile-right));max-width:calc(100% - var(--mobile-left) - var(--mobile-right));overflow:visible}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto;gap:6px!important;padding:6px!important;--dock-btn:clamp(28px,calc((100vw - 64px)/7),42px)}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.fullscreen-controls{grid-column:1/-1;grid-row:1;width:100%!important;justify-content:space-between!important;gap:4px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.fullscreen-controls>*{flex:0 1 var(--dock-btn)!important;min-width:0!important;height:36px!important;min-height:36px!important;max-height:36px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.fullscreen-controls button svg{width:20px!important;height:20px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.fullscreen-controls select{font-size:11px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.battle-view-options{grid-column:1;grid-row:2;justify-self:start;flex:none!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.battle-view-options .setting-check{font-size:10px!important;line-height:16px!important;gap:4px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.battle-view-options input{width:12px!important;height:12px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls{grid-column:2;grid-row:2;gap:4px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls>button{width:36px!important;min-width:36px!important;max-width:36px!important;height:36px!important;min-height:36px!important;flex:0 0 36px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls button:is(#autoFollow,#directorBtn)::before{font-size:5.5px!important;line-height:7px!important;top:2px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls button svg{width:18px!important;height:18px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls button:is(#autoFollow,#directorBtn) :is(.auto-state,.director-state){font-size:8px!important;line-height:8px!important;bottom:2px!important}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit>.tracked-body{grid-template-columns:74px minmax(0,1fr) 46px;grid-template-rows:24px 3px 45px;gap:3px 6px;padding:6px 8px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit>summary{top:6px;bottom:auto;left:8px;width:74px;line-height:13px;font-size:9px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-portrait{width:42px;height:32px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-skills{gap:4px;justify-content:space-between}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-skill-slot{flex:1 1 0;max-width:48px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .skill-name{font-size:8px;line-height:10px;min-height:10px;max-height:20px}
+}
+/* Wide touch displays retain one row, with larger squares when space permits. */
+@media(min-width:600px) and (pointer:coarse){
+ html body #battlefield .mobile-dock-row{--dock-btn:clamp(26px,calc((100vw - 120px)/11),40px)}
+ html body #battlefield .mobile-dock-row .camera-controls button:is(#autoFollow,#directorBtn)::before{font-size:6.5px!important;line-height:8px!important;top:2px!important}
+ html body #battlefield .mobile-dock-row .camera-controls button:is(#autoFollow,#directorBtn) svg{width:18px!important;height:18px!important}
+ html body #battlefield .mobile-dock-row .camera-controls button:is(#autoFollow,#directorBtn) :is(.auto-state,.director-state){font-size:8px!important;line-height:8px!important;bottom:2px!important}
+}
+
+/* The result uses the game's actual model, animated independently of the finished battle. */
+html body .result-card #resultIcon.victory-model{position:relative;display:block;isolation:isolate;overflow:hidden;height:154px;width:100%;margin:4px 0 0;background:none;border:0}
+html body .result-card #resultIcon.victory-model .victory-canvas{position:relative;z-index:1;display:block;width:100%;height:100%;pointer-events:none}
+html body .result-card #resultIcon.victory-model .gpu-world{position:absolute;inset:0;z-index:0;width:100%;height:100%;pointer-events:none}
+html body .result-card #resultIcon.victory-model .draw-symbol{display:grid;place-items:center;height:100%}
+@media(max-width:600px){html body .result-card #resultIcon.victory-model{height:124px}}
+@media(max-height:450px){html body .result-card #resultIcon.victory-model{height:88px}html body .result-card{padding-top:12px}html body .result-card h2{font-size:22px}}
+
+/* In a two-row phone bar, view toggles sit side by side on the second row. */
+@media(max-width:599px) and (orientation:portrait){
+ html body .arena-panel>.playback .view-option-items{flex-direction:row!important;gap:8px!important;align-items:center!important}
+ html body .arena-panel>.playback .battle-view-options{border:0!important;padding:0!important}
+ html body .arena-panel>.playback .camera-settings-group{border-left:1px solid var(--ui-line);padding-left:8px}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row{position:relative}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row::before{content:'';position:absolute;left:6px;right:6px;top:45px;border-top:1px solid #b9c8b144;pointer-events:none}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.battle-view-options{border:0!important;padding:0!important;width:auto!important;max-width:none!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.battle-view-options .view-option-items{display:flex!important;flex-direction:row!important;gap:9px!important;align-items:center!important;border:0!important;padding:0!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.battle-view-options .setting-check{white-space:nowrap;min-height:26px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls{border:0!important;border-left:1px solid #b9c8b144!important;padding-left:8px!important}
+}
+
+@media(max-width:359px) and (orientation:portrait){
+ html body .arena-panel>.playback .camera-controls{gap:3px}
+ html body .arena-panel>.playback .camera-controls button{width:32px!important;min-width:32px!important}
+ html body .arena-panel>.playback .view-option-items{gap:6px!important}
+ html body .arena-panel>.playback .setting-check{font-size:9px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls>button{width:32px!important;min-width:32px!important;max-width:32px!important;height:32px!important;min-height:32px!important;flex-basis:32px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls button:is(#autoFollow,#directorBtn)::before{line-height:6px!important;top:1px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls button:is(#autoFollow,#directorBtn) svg{width:14px!important;height:14px!important}
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.camera-controls button:is(#autoFollow,#directorBtn) :is(.auto-state,.director-state){font-size:7px!important;line-height:7px!important;bottom:1px!important}
+}
+
+/* Keep the result actions visible in a phone's embedded battle viewport. */
+@media(max-width:599px) and (orientation:portrait){
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-card{padding:12px 12px 10px}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-card #resultIcon.victory-model{height:80px;margin:0}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-card .eyebrow{font-size:10px;line-height:12px}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-card h2{font-size:22px;line-height:1.25;margin:4px 0}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-card #resultDesc{font-size:11px;line-height:1.4;margin:0 0 7px}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-stats>*{font-size:11px;padding:5px 7px}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-mvp{font-size:10px;line-height:1.4;margin:5px 0 0}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-actions{margin-top:8px;gap:5px;flex-wrap:nowrap}
+ html body #battlefield:not(:fullscreen):not(.expanded) .result-actions button{min-height:34px;padding:0 8px;font-size:11px}
+}
+@media(max-height:450px) and (min-width:480px){
+ html body .result-card{display:grid;grid-template-columns:120px minmax(0,1fr);column-gap:12px;row-gap:3px;width:min(580px,100%);padding:12px 16px}
+ html body .result-card>.eyebrow{grid-column:2;font-size:10px;line-height:12px}
+ html body .result-card #resultIcon.victory-model{grid-column:1;grid-row:1/6;align-self:center;height:140px;margin:0}
+ html body .result-card h2{grid-column:2;font-size:22px;line-height:1.2;margin:0}
+ html body .result-card #resultDesc{grid-column:2;font-size:11px;line-height:1.4;margin:0 0 3px}
+ html body .result-stats{grid-column:2;margin:0}
+ html body .result-stats>*{font-size:11px;padding:4px 7px}
+ html body .result-mvp{grid-column:2;font-size:10px;line-height:1.35;margin:3px 0}
+ html body .result-actions{grid-column:1/-1;justify-content:center;margin-top:5px}
+ html body .result-actions button{min-height:32px;font-size:11px}
+}
+
+@media(min-width:600px) and (max-width:1000px){html body #battlefield:is(:fullscreen,.expanded) .mobile-dock-row>.zoom-status{display:none!important}}
+
+/* A wide mobile screen can keep selected-unit information on one compact row. */
+@media(min-width:600px) and (pointer:coarse),(orientation:landscape) and (max-height:500px){
+ html body #battlefield:is(:fullscreen,.expanded) .mobile-playback-panel:has(#trackedUnit:not([hidden])){width:min(700px,calc(100% - var(--mobile-left) - var(--mobile-right)))}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit>.tracked-body{grid-template-columns:74px 84px 42px minmax(0,1fr)!important;grid-template-rows:48px 3px!important;gap:2px 6px;padding:5px 8px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit>summary{top:7px;bottom:auto;left:8px;width:74px;font-size:9px;line-height:13px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit #trackedHp{grid-column:2;grid-row:1;align-self:center;font-size:9px;margin:0}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-health{grid-column:2;grid-row:2;margin:0}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-portrait{grid-column:3;grid-row:1/3;width:42px;height:36px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-skills{grid-column:4;grid-row:1/3;justify-content:space-between;gap:4px;margin:0}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-skill-slot{flex:1 1 0;min-width:0;max-width:60px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .tracked-skill{width:27px;min-width:27px;height:27px}
+ html body #battlefield:is(:fullscreen,.expanded) #trackedUnit .skill-name{font-size:8px;line-height:10px;min-height:10px;max-height:20px}
+}

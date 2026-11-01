@@ -1,0 +1,151 @@
+/* Camera magnification belongs to the active camera, on both desktop and mobile. */
+#battlefield .zoom-status{display:none}
+.camera-controls .camera-zoom{display:none;position:absolute;bottom:2px;left:0;right:0;text-align:center;font:700 7px/8px Arial,sans-serif;letter-spacing:-.2px;pointer-events:none}
+.camera-controls button[aria-pressed=true] .camera-zoom{display:block}
+.camera-controls #viewHome[aria-pressed=true] svg,.camera-controls #viewNext[aria-pressed=true] svg{transform:translateY(-3px);margin-top:0;margin-bottom:0}
+.battle-secondary-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0;margin-left:auto;background:none;border:0}
+.arena-panel>.playback>.frame-status{display:none}
+.battle-secondary-controls[hidden]{display:none}
+.battle-secondary-controls .camera-controls{position:static;display:flex;flex-direction:row;gap:4px;flex:none;padding:0;margin:0}
+.battle-secondary-controls .battle-view-options{position:static;display:block;padding:0;margin:0;border:0;background:none;max-width:none}
+.battle-secondary-controls .battle-view-options>summary{display:none}
+.battle-secondary-controls .battle-view-options[open] .view-option-items{position:static;display:flex;flex-direction:row;align-items:center;gap:12px;min-width:0;margin:0;padding:0;border:0;background:none;box-shadow:none}
+.battle-secondary-controls .view-option-items .setting-check{display:flex;align-items:center;gap:5px;min-height:32px;font-size:10px;white-space:nowrap;color:#687f9a}
+.battle-secondary-controls .view-option-items input{width:13px;height:13px;margin:0;accent-color:#7891b1}
+.battle-secondary-controls .zoom-status{position:static;margin-left:auto;padding:0;border:0;background:none;color:#687f9a;box-shadow:none;font-size:10px;white-space:nowrap}
+.battle-secondary-controls .camera-controls button,.battle-secondary-controls .camera-controls .auto-follow{width:34px;min-width:34px;height:34px;padding:4px;border:1px solid #c5d0de;background:#fff;color:#607896;border-radius:6px;box-shadow:none}
+.battle-secondary-controls .camera-controls button:hover{background:#f1f5fa}
+.battle-secondary-controls .camera-controls button[aria-pressed=true]{background:#e3ecf7;color:#435e86;border-color:#b4c6dd}
+.battle-secondary-controls .camera-controls #autoFollow[aria-pressed=true] em{color:#526d91}
+.battle-secondary-controls .camera-controls .camera-number{background:#e6edf5;color:#8294aa}
+.battle-secondary-controls #viewNext[data-camera="1"] .camera-number-one,.battle-secondary-controls #viewNext[data-camera="2"] .camera-number-two{background:#48678e;color:#fff}
+#battlefield>.tracked-unit{position:absolute;left:10px;bottom:10px;top:auto;width:min(360px,calc(100% - 20px));box-shadow:none}
+#battlefield>.tracked-unit>summary{position:absolute;left:8px;top:6px;width:88px;padding:0;font-size:10px;line-height:13px;white-space:nowrap}
+#battlefield>.tracked-unit>summary:after{display:none}
+#battlefield>.tracked-unit .tracked-body{display:grid;grid-template-columns:88px minmax(0,1fr);grid-template-rows:29px 11px;column-gap:8px;padding:5px 8px 6px;align-items:center}
+#battlefield>.tracked-unit .tracked-health{grid-column:1;grid-row:1;align-self:end;margin-bottom:3px}
+#battlefield>.tracked-unit .tracked-body p{grid-column:1;grid-row:2;font-size:8px;margin:0;line-height:1.2;white-space:nowrap}
+#battlefield>.tracked-unit .tracked-skills{grid-column:2;grid-row:1/3;margin:0;min-width:0;align-self:center}
+#battlefield>.tracked-unit .tracked-skill{height:29px;padding:2px}
+#battlefield>.tracked-unit .tracked-skill .skill-picture{width:21px;height:21px}
+#battlefield>.tracked-unit:not([open]){min-height:27px}
+#battlefield>.tracked-unit:not([open]) .tracked-body{display:none}
+#battlefield:is(:fullscreen,.expanded)>.tracked-unit{bottom:74px}
+@media(min-width:761px) and (pointer:fine){
+ #battlefield .zoom-status,.battle-secondary-controls .zoom-status{display:block}
+ .camera-controls button[aria-pressed=true] .camera-zoom{display:none}
+ .camera-controls #viewHome[aria-pressed=true] svg,.camera-controls #viewNext[aria-pressed=true] svg{transform:none}
+}
+/* Expanded mobile controls hug the safe edges. */
+@media(max-width:760px),(pointer:coarse){
+ #battlefield{--mobile-left:max(10px,env(safe-area-inset-left));--mobile-right:max(10px,env(safe-area-inset-right));--mobile-bottom:max(10px,env(safe-area-inset-bottom));--mobile-top:max(18px,calc(env(safe-area-inset-top) + 8px))}
+ #battlefield:not(:fullscreen):not(.expanded) .fullscreen-controls{display:none}
+ .arena-panel>.playback{display:flex;gap:4px;padding:8px}
+ .playback-left{flex-wrap:wrap;gap:4px}.playback .speed-label,.playback .frame-status{display:none}
+ .playback .speed-options{gap:1px}.playback .speed-options button{padding:6px 5px;font-size:10px}
+ #battlefield:not(:fullscreen):not(.expanded) .camera-controls{position:absolute;right:10px;bottom:10px;display:flex;flex-direction:row;gap:4px}
+ #battlefield .camera-controls button,#battlefield .camera-controls .auto-follow{width:34px;min-width:34px;height:34px;padding:4px;border-radius:6px}
+ #battlefield .camera-controls #viewHome svg{width:23px;height:23px}
+ #battlefield .camera-controls #viewNext svg{width:21px;height:21px;margin-top:4px}
+ #battlefield .camera-controls #autoFollow{padding:2px;gap:0}
+ #battlefield .camera-controls #autoFollow svg{width:16px;height:16px}
+ #battlefield .camera-controls #autoFollow em,#battlefield .camera-controls #autoFollow .auto-state{font-size:6px;line-height:6px;margin:0}
+ #battlefield .camera-controls .camera-number{top:3px;min-width:8px;height:9px;font-size:6px}
+ #battlefield .battle-view-options>summary{display:none}
+ #battlefield .battle-view-options{position:absolute;top:77px;right:10px;left:auto;bottom:auto;background:none;border:0;padding:0;z-index:3}
+ #battlefield .battle-view-options .view-option-items{position:static;display:flex;flex-direction:row;align-items:center;min-width:0;gap:8px;margin:0;padding:3px 7px;background:#233025e8;border:1px solid #97a88d60;border-radius:6px;box-shadow:none}
+ #battlefield .view-option-items .setting-check{min-height:28px;font-size:10px;gap:4px;white-space:nowrap}
+ #battlefield .view-option-items input{width:13px;height:13px;margin:0;accent-color:#b8cd9e}
+ #battlefield:not(:fullscreen):not(.expanded) .zoom-status{top:auto;bottom:49px;right:10px;left:auto;max-width:calc(100% - 22px);font-size:8px;padding:3px 5px}
+ #battlefield:not(:fullscreen):not(.expanded) .tracked-unit{left:10px;bottom:10px;width:min(190px,calc(100% - 136px))}
+ #battlefield:is(:fullscreen,.expanded) .scoreboard{top:var(--mobile-top);left:var(--mobile-left);right:var(--mobile-right);gap:6px}
+ #battlefield:is(:fullscreen,.expanded) .mobile-battle-dock{position:absolute;inset:0;left:0;right:0;bottom:0;padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none;z-index:5;pointer-events:none}
+ #battlefield .mobile-dock-top{display:contents}
+ #battlefield .mobile-battle-dock .camera-controls{position:absolute;right:var(--mobile-right);left:auto;top:auto;bottom:calc(var(--mobile-bottom) + 45px);display:flex;flex-direction:column;gap:4px;pointer-events:auto}
+ #battlefield .mobile-battle-dock .camera-controls button{width:34px;min-width:34px;height:34px}
+ #battlefield .mobile-battle-dock .battle-view-options{position:absolute;left:var(--mobile-left);right:auto;top:auto;bottom:calc(var(--mobile-bottom) + 45px);width:max-content;margin:0;padding:0;z-index:auto;pointer-events:auto}
+ #battlefield .mobile-battle-dock .battle-view-options[open] .view-option-items{position:static;min-width:0;gap:9px;margin:0;padding:2px 7px;background:#233025df;box-shadow:none}
+ #battlefield .mobile-battle-dock .view-option-items .setting-check{font-size:10px;min-height:28px}
+ #battlefield .mobile-battle-dock .zoom-status{position:absolute;right:var(--mobile-right);left:auto;top:auto;bottom:calc(var(--mobile-bottom) + 161px);width:auto;max-width:calc(100% - 25px);font-size:8px;line-height:1.4;padding:3px 5px;background:#233025bf;border-radius:4px;color:#e2eadc;white-space:normal;text-align:right;overflow:visible}
+ #battlefield .mobile-battle-dock .fullscreen-controls{position:absolute;left:50%;right:auto;top:auto;bottom:var(--mobile-bottom);transform:translateX(-50%);display:flex;flex-wrap:nowrap;justify-content:center;width:max-content;max-width:calc(100% - var(--mobile-left) - var(--mobile-right));padding:4px;margin:0;gap:4px;border:1px solid #8d9f8166;border-radius:7px;background:#1f2e24ed;pointer-events:auto;box-shadow:0 2px 9px #0003}
+ #battlefield .mobile-battle-dock .fullscreen-controls button{width:32px;min-width:32px;height:32px;padding:4px;font-size:16px;border-radius:5px}
+ #battlefield .mobile-battle-dock .fullscreen-controls button svg{width:18px;height:18px}
+ #battlefield .mobile-battle-dock .fullscreen-controls select{height:32px;min-width:49px;max-width:54px;font-size:10px;padding:0 3px}
+ #battlefield .mobile-battle-dock #fsPlay{background:#dce7d2;color:#344b2b;border-color:#bdcfae}
+ #battlefield:is(:fullscreen,.expanded) .tracked-unit{left:var(--mobile-left);bottom:calc(var(--mobile-bottom) + 88px);width:min(182px,calc(100% - 72px));top:auto;z-index:4;background:#202f25d9;box-shadow:none}
+ #battlefield:is(:fullscreen,.expanded) .tracked-unit>summary{font-size:9px;line-height:1.3;padding:5px 7px 3px}
+ #battlefield:is(:fullscreen,.expanded) .tracked-body{padding:0 6px 6px}
+ #battlefield:is(:fullscreen,.expanded) .tracked-body p{font-size:8px;margin:3px 0;line-height:1.2}
+ #battlefield:is(:fullscreen,.expanded) .tracked-skills{gap:4px;margin-top:4px}
+ #battlefield:is(:fullscreen,.expanded) .tracked-skill{height:26px;padding:2px}
+ #battlefield:is(:fullscreen,.expanded) .tracked-skill .skill-picture{width:20px;height:20px}
+ #battlefield:is(:fullscreen,.expanded) .result-overlay{padding:var(--mobile-top) var(--mobile-right) var(--mobile-bottom) var(--mobile-left)}
+ /* Selecting a unit adds one compact information row above the playback row. */
+ #battlefield .mobile-playback-panel{position:absolute;left:50%;bottom:var(--mobile-bottom);transform:translateX(-50%);width:280px;max-width:calc(100% - var(--mobile-left) - var(--mobile-right));border:1px solid #8d9f8166;border-radius:7px;background:#1f2e24ed;box-shadow:0 2px 9px #0003;pointer-events:auto}
+ #battlefield .mobile-playback-panel .fullscreen-controls{position:static;transform:none;width:100%;max-width:none;border:0;background:none;box-shadow:none;border-radius:0;padding:4px;gap:4px}
+ #battlefield .mobile-playback-panel #trackedUnit{position:relative;left:auto;top:auto;bottom:auto;width:100%;border:0;border-bottom:1px solid #8d9f8144;border-radius:0;background:none;box-shadow:none}
+ #battlefield .mobile-playback-panel #trackedUnit[hidden]{display:none}
+ #battlefield .mobile-playback-panel #trackedUnit>summary{position:absolute;top:6px;left:8px;width:69px;padding:0;font-size:9px;line-height:13px;white-space:nowrap}
+ #battlefield .mobile-playback-panel #trackedUnit>summary:after{display:none}
+ #battlefield .mobile-playback-panel #trackedUnit .tracked-body{display:grid;grid-template-columns:69px minmax(0,1fr);grid-template-rows:29px 11px;column-gap:7px;padding:5px 8px 6px;align-items:center}
+ #battlefield .mobile-playback-panel #trackedUnit:not([open]){min-height:27px}
+ #battlefield .mobile-playback-panel #trackedUnit:not([open]) .tracked-body{display:none}
+ #battlefield .mobile-playback-panel .tracked-health{grid-column:1;grid-row:1;align-self:end;margin-bottom:3px;width:100%}
+ #battlefield .mobile-playback-panel #trackedHp{grid-column:1;grid-row:2;font-size:8px;margin:0;white-space:nowrap}
+ #battlefield .mobile-playback-panel .tracked-skills{grid-column:2;grid-row:1/3;gap:3px;margin:0;min-width:0;align-self:center}
+ #battlefield .mobile-playback-panel .tracked-skill{height:29px;padding:2px}
+ #battlefield .mobile-battle-dock:has(#trackedUnit:not([hidden])) .battle-view-options{bottom:calc(var(--mobile-bottom) + 99px)}
+ /* All mobile fullscreen controls share one row without horizontal scrolling. */
+ #battlefield .mobile-playback-panel{width:max-content;max-width:calc(100% - var(--mobile-left) - var(--mobile-right))}
+ #battlefield .mobile-dock-row{display:flex;align-items:center;flex-wrap:nowrap;gap:2px;padding:4px;border-radius:7px}
+ #battlefield .mobile-dock-row .fullscreen-controls{flex:none;position:static;display:flex;width:auto;max-width:none;padding:0;margin:0;gap:1px;transform:none;border:0;background:none;box-shadow:none}
+ #battlefield .mobile-dock-row .fullscreen-controls button{width:28px;min-width:28px;height:32px;padding:2px}
+ #battlefield .mobile-dock-row .fullscreen-controls select{height:32px;min-width:39px;width:39px;max-width:39px;padding:0;font-size:9px}
+ #battlefield .mobile-dock-row .fullscreen-controls button svg{width:16px;height:16px}
+ #battlefield .mobile-dock-row .battle-view-options,#battlefield .mobile-battle-dock:has(#trackedUnit:not([hidden])) .mobile-dock-row .battle-view-options{position:static;flex:none;inset:auto;width:auto;padding:0;margin:0}
+ #battlefield .mobile-dock-row .battle-view-options[open] .view-option-items{position:static;flex-direction:column;align-items:flex-start;gap:2px;padding:0 4px;margin:0;min-width:0;border:0;border-left:1px solid #8d9f8144;border-right:1px solid #8d9f8144;border-radius:0;background:none}
+ #battlefield .mobile-dock-row .view-option-items .setting-check{font-size:0;min-height:14px;height:14px;line-height:14px;gap:3px}
+ #battlefield .mobile-dock-row .view-option-items .setting-check:after{font-size:7.5px;content:'체력바'}
+ #battlefield .mobile-dock-row .view-option-items .setting-check:last-child:after{content:'흔들림'}
+ #battlefield .mobile-dock-row .view-option-items input{width:10px;height:10px;flex:none}
+ #battlefield .mobile-dock-row .camera-controls{position:static;display:flex;flex-direction:row;flex:none;gap:1px;margin-left:auto;padding:0;inset:auto}
+ #battlefield .mobile-dock-row .camera-controls button{width:28px;min-width:28px;height:32px;padding:2px}
+ #battlefield .mobile-dock-row #viewHome svg{width:18px;height:18px}
+ #battlefield .mobile-dock-row #viewNext svg{width:16px;height:16px;margin-top:4px}
+ #battlefield .mobile-dock-row #autoFollow svg{width:14px;height:14px}
+ #battlefield .mobile-dock-row .camera-number{font-size:6px;min-width:6px;height:8px}
+ #battlefield .mobile-battle-dock .zoom-status{bottom:auto;top:calc(var(--mobile-top) + 65px);right:var(--mobile-right)}
+}
+@media(min-width:360px) and (max-width:389px){
+ #battlefield .mobile-dock-row .fullscreen-controls button,#battlefield .mobile-dock-row .camera-controls button{width:26px;min-width:26px;height:30px;padding:1px}
+ #battlefield .mobile-dock-row .battle-view-options[open] .view-option-items{padding:0 2px}
+}
+@media(max-width:359px){
+ #battlefield .mobile-dock-row{gap:0;padding:2px}
+ #battlefield .mobile-dock-row .fullscreen-controls,#battlefield .mobile-dock-row .camera-controls{gap:0}
+ #battlefield .mobile-dock-row .fullscreen-controls button,#battlefield .mobile-dock-row .camera-controls button{width:24px;min-width:24px;height:28px;padding:1px}
+ #battlefield .mobile-dock-row .fullscreen-controls select{width:33px;min-width:33px;max-width:33px;font-size:8px}
+ #battlefield .mobile-dock-row .fullscreen-controls button svg{width:14px;height:14px}
+ #battlefield .mobile-dock-row #viewHome svg{width:16px;height:16px}
+ #battlefield .mobile-dock-row #viewNext svg{width:14px;height:14px}
+ #battlefield .mobile-dock-row #autoFollow svg{width:12px;height:12px}
+ #battlefield .mobile-dock-row .battle-view-options[open] .view-option-items{padding:0}
+}
+@media(max-width:760px),(pointer:coarse){
+ .battle-secondary-controls{padding:0;gap:6px}
+ .battle-secondary-controls .camera-controls button,.battle-secondary-controls .camera-controls .auto-follow{width:32px;min-width:32px;height:34px;padding:3px}
+ .battle-secondary-controls .camera-controls #viewHome svg{width:22px;height:22px}
+ .battle-secondary-controls .camera-controls #viewNext svg{width:20px;height:20px}
+ .battle-secondary-controls .battle-view-options[open] .view-option-items{gap:8px}
+ .battle-secondary-controls .view-option-items .setting-check{font-size:9px;gap:3px}
+ #battlefield:not(:fullscreen):not(.expanded)>.tracked-unit{left:8px;bottom:8px;width:calc(100% - 16px)}
+ #battlefield>.tracked-unit>summary{font-size:9px;width:69px}
+ #battlefield>.tracked-unit .tracked-body{grid-template-columns:69px minmax(0,1fr);column-gap:6px}
+}
+/* Camera controls are bare icons; colour identifies the selected camera. */
+#battlefield .camera-controls,.battle-secondary-controls .camera-controls{background:none;border-color:transparent;box-shadow:none}
+#battlefield .camera-controls button,#battlefield .camera-controls button:hover,#battlefield .camera-controls button[aria-pressed=true],.battle-secondary-controls .camera-controls button,.battle-secondary-controls .camera-controls button:hover,.battle-secondary-controls .camera-controls button[aria-pressed=true]{background:none;border-color:transparent;box-shadow:none;border-radius:0}
+#battlefield .camera-controls button{color:#8da084}
+#battlefield .camera-controls button[aria-pressed=true]{color:#edf5e4}
+.battle-secondary-controls .camera-controls button{color:#99a9bc}
+.battle-secondary-controls .camera-controls button[aria-pressed=true]{color:#425f85}

@@ -1,0 +1,10 @@
+/* Claude guide-stage: 캐릭터 소개창 3D 배경 위 공기층. 바닥은 character-guide.js가 화면보다 넓게 그린다.
+   먼 쪽은 전투장처럼 먼지 낀 안개와 흐린 도시 윤곽으로 녹이고, 가장자리는 살짝 어둡게 해 바닥 끝·모서리가 보이지 않게 한다.
+   티라노: 따뜻한 흙먼지 / 포크레인: 차가운 공사장 매연. 모델 위는 거의 덮지 않도록 위쪽 1/3만 흐린다. */
+#characterDialog .character-stage::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;
+ background:linear-gradient(180deg,#d3c496c4 0%,#c2b28859 15%,transparent 36%),radial-gradient(ellipse 75% 70% at 50% 58%,transparent 58%,#1f1d1566 100%)}
+#characterDialog[data-team="dig"] .character-stage::after{
+ background:linear-gradient(180deg,#aab3b6c4 0%,#97a1a659 15%,transparent 36%),radial-gradient(ellipse 75% 70% at 50% 58%,transparent 58%,#14191d70 100%)}
+#characterDialog .character-stage::before{z-index:2;inset:3% -2% auto;height:22%;opacity:.26;background:#5b5541;
+ -webkit-mask:linear-gradient(180deg,#000 40%,transparent);mask:linear-gradient(180deg,#000 40%,transparent)}
+#characterDialog[data-team="dig"] .character-stage::before{background:#3b4852;opacity:.3}

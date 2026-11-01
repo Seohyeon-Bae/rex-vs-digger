@@ -1,0 +1,629 @@
+{
+  "sampleRate": 24000,
+  "original": false,
+  "soundDesign": "CC0 Foley and lion-based predator voice; licensed real guitar rock loop by BaDoink",
+  "assets": [
+    {
+      "name": "rex-step-1",
+      "seconds": 0.27729166666666666,
+      "peak": 0.68,
+      "rms": 0.118883,
+      "sourceFiles": [
+        "footstep_concrete_000.ogg",
+        "impactSoft_heavy_000.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "7d37cc18d8cc2345fd516d42a7115191f7dc24aadd1d40b5e476014a54368540"
+    },
+    {
+      "name": "track-1",
+      "seconds": 0.27,
+      "peak": 0.58,
+      "rms": 0.151464,
+      "sourceFiles": [
+        "machine_03.ogg",
+        "impactMetal_heavy_000.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "d1684023de0948b18a5b9f2004eec4b1aa7ead492a89327f9d48136fabf3c26e"
+    },
+    {
+      "name": "charge-1",
+      "seconds": 0.4555,
+      "peak": 0.64,
+      "rms": 0.048244,
+      "sourceFiles": [
+        "footstep_concrete_000.ogg",
+        "footstep_concrete_001.ogg",
+        "footstep_concrete_002.ogg",
+        "footstep_concrete_003.ogg",
+        "sfx100v2_air_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "db91c6b6849028f5b46b1a3f1793df1fc6bcad3c06d4650f1265c26f502956f6"
+    },
+    {
+      "name": "bite-1",
+      "seconds": 0.4718333333333333,
+      "peak": 0.7,
+      "rms": 0.108542,
+      "sourceFiles": [
+        "impactPunch_heavy_000.ogg",
+        "impactSoft_heavy_000.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "e95abe6e0a13fb243d203d27bdaaa66c293046bdeff0e0c8f5b9d3d2faa1b25a"
+    },
+    {
+      "name": "tail-swing-1",
+      "seconds": 0.4785,
+      "peak": 0.52,
+      "rms": 0.12196,
+      "sourceFiles": [
+        "sfx100v2_air_02.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "d2e1b9dbebc84c8458fe566775609a289ef82aad1711c73e3ce526a4a0bcf6b6"
+    },
+    {
+      "name": "body-hit-1",
+      "seconds": 0.305875,
+      "peak": 0.72,
+      "rms": 0.145938,
+      "sourceFiles": [
+        "impactPunch_heavy_002.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "3a1a2456b37dac316dd5ad55dac0585245e8ff1883629861d57bb22c4ba5d110"
+    },
+    {
+      "name": "metal-hit-1",
+      "seconds": 0.43454166666666666,
+      "peak": 0.76,
+      "rms": 0.094115,
+      "sourceFiles": [
+        "impactPlate_heavy_000.ogg",
+        "impactMetal_heavy_000.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "0254e620bd09e19a72f26f9a9dd3c818908723d6f43075785e446ba175caa393"
+    },
+    {
+      "name": "hydraulic-1",
+      "seconds": 0.34,
+      "peak": 0.53,
+      "rms": 0.09323,
+      "sourceFiles": [
+        "machine_03.ogg",
+        "sfx100v2_air_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "f36b4f65b776e7d3f617398f061cf39d96fad3b5a4dce292dc23c8963feba297"
+    },
+    {
+      "name": "parry-1",
+      "seconds": 0.553125,
+      "peak": 0.75,
+      "rms": 0.068569,
+      "sourceFiles": [
+        "impactPlate_light_000.ogg",
+        "sfx100v2_metal_hit_01.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "2594acc4ec3db6f0947b37e6779558dbf2c2b6dfc7d810de72a54ad8568f464f"
+    },
+    {
+      "name": "explosion-1",
+      "seconds": 0.41720833333333335,
+      "peak": 0.8,
+      "rms": 0.068695,
+      "sourceFiles": [
+        "explosion.ogg",
+        "impactMetal_heavy_000.ogg",
+        "sfx100v2_stones_01.ogg",
+        "impactPunch_heavy_002.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "bd0c2e8e00af5dfbdb1a5beb182c5eec1f8f870b00a9a236b4c742c547ae6d7e"
+    },
+    {
+      "name": "land-1",
+      "seconds": 0.3283333333333333,
+      "peak": 0.73,
+      "rms": 0.145413,
+      "sourceFiles": [
+        "impactPunch_heavy_002.ogg",
+        "footstep_concrete_000.ogg",
+        "sfx100v2_stones_01.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "23c1e1daff6dc026a23bf5a62c3778e7c55bdceac02799a4cfcb0fb6cf6b42e7"
+    },
+    {
+      "name": "rex-step-2",
+      "seconds": 0.30916666666666665,
+      "peak": 0.68,
+      "rms": 0.122404,
+      "sourceFiles": [
+        "footstep_concrete_001.ogg",
+        "impactSoft_heavy_001.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "1b412c44e446934b5f971fdf7ecf1bcba7207223389f5ef6374dc9c59547beb6"
+    },
+    {
+      "name": "track-2",
+      "seconds": 0.35,
+      "peak": 0.530939,
+      "rms": 0.16,
+      "sourceFiles": [
+        "machine_03.ogg",
+        "impactMetal_heavy_001.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "19940c537f5ee1828b971af71a97b527a133f3e9e1690a263510076666afa2eb"
+    },
+    {
+      "name": "charge-2",
+      "seconds": 0.4593333333333333,
+      "peak": 0.64,
+      "rms": 0.050779,
+      "sourceFiles": [
+        "footstep_concrete_001.ogg",
+        "footstep_concrete_002.ogg",
+        "footstep_concrete_003.ogg",
+        "footstep_concrete_004.ogg",
+        "sfx100v2_air_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "5846eec9a32d38694f663ef8aec084de8125319af2ffef73fcd726d8985ed66e"
+    },
+    {
+      "name": "bite-2",
+      "seconds": 0.35791666666666666,
+      "peak": 0.7,
+      "rms": 0.133845,
+      "sourceFiles": [
+        "impactPunch_heavy_001.ogg",
+        "impactSoft_heavy_001.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "95e9394ec9fe2c95639e2d523778d46cd2c9e9018d86ca2365775f08165ad2fe"
+    },
+    {
+      "name": "tail-swing-2",
+      "seconds": 0.48,
+      "peak": 0.52,
+      "rms": 0.114719,
+      "sourceFiles": [
+        "sfx100v2_air_02.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "3c4c2b46d8c67fa7c980f61d5a02856a3c3c12b6175a553446ef13f8701d7761"
+    },
+    {
+      "name": "body-hit-2",
+      "seconds": 0.30516666666666664,
+      "peak": 0.72,
+      "rms": 0.138164,
+      "sourceFiles": [
+        "impactPunch_heavy_003.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "a6ef0d2a452b5a031de108ce64031dbd70d98475c1ce763dfa85edef78a84543"
+    },
+    {
+      "name": "metal-hit-2",
+      "seconds": 0.3592916666666667,
+      "peak": 0.76,
+      "rms": 0.150408,
+      "sourceFiles": [
+        "impactPlate_heavy_001.ogg",
+        "impactMetal_heavy_001.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "6f7dcdb2c25e9c66949140822c319d9f38c0f5d6ab2258ecdaa3adc6a8122a56"
+    },
+    {
+      "name": "hydraulic-2",
+      "seconds": 0.34,
+      "peak": 0.53,
+      "rms": 0.1035,
+      "sourceFiles": [
+        "machine_03.ogg",
+        "sfx100v2_air_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "64c4e464217f6c63df962ddabcc62fca653587d10060b8e7afbc6af5647cc13c"
+    },
+    {
+      "name": "parry-2",
+      "seconds": 0.64875,
+      "peak": 0.75,
+      "rms": 0.056754,
+      "sourceFiles": [
+        "impactPlate_light_001.ogg",
+        "sfx100v2_metal_hit_01.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "60c5d5a9f6b31defa484d4d47a2d1ac89536879018382f7c20852bff9656b76b"
+    },
+    {
+      "name": "explosion-2",
+      "seconds": 0.484125,
+      "peak": 0.8,
+      "rms": 0.058008,
+      "sourceFiles": [
+        "explosion.ogg",
+        "impactMetal_heavy_001.ogg",
+        "sfx100v2_stones_02.ogg",
+        "impactPunch_heavy_003.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "728c0ea4a3b181bae63b87a9e8b1e3b40dfb01b12568a5cebafa13bf6ada725d"
+    },
+    {
+      "name": "land-2",
+      "seconds": 0.30516666666666664,
+      "peak": 0.73,
+      "rms": 0.138579,
+      "sourceFiles": [
+        "impactPunch_heavy_003.ogg",
+        "footstep_concrete_001.ogg",
+        "sfx100v2_stones_02.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "645154787e826e777cb011cac929dcec6dddfdafd453b8909fea0a8919882fea"
+    },
+    {
+      "name": "rex-step-3",
+      "seconds": 0.335625,
+      "peak": 0.68,
+      "rms": 0.112007,
+      "sourceFiles": [
+        "footstep_concrete_002.ogg",
+        "impactSoft_heavy_002.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "7e8f1a68301887b4f264f3f4b0ec27f0f592e9028d76fb91e01a13c59c5c95c8"
+    },
+    {
+      "name": "track-3",
+      "seconds": 0.27,
+      "peak": 0.573104,
+      "rms": 0.16,
+      "sourceFiles": [
+        "machine_03.ogg",
+        "impactMetal_heavy_002.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "66efea4a55779c11b6bcf81e987d869f19ef7f56754f5069845f64b9070e6cb5"
+    },
+    {
+      "name": "charge-3",
+      "seconds": 0.4509166666666667,
+      "peak": 0.64,
+      "rms": 0.053177,
+      "sourceFiles": [
+        "footstep_concrete_002.ogg",
+        "footstep_concrete_003.ogg",
+        "footstep_concrete_004.ogg",
+        "footstep_concrete_000.ogg",
+        "sfx100v2_air_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "29b0e88b87d90180430c9102a1fd12f534b7e1e5cd17524bd087e79f6d19bc64"
+    },
+    {
+      "name": "bite-3",
+      "seconds": 0.313375,
+      "peak": 0.7,
+      "rms": 0.137462,
+      "sourceFiles": [
+        "impactPunch_heavy_002.ogg",
+        "impactSoft_heavy_002.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "0082deea61c67242f4cc597b3ca0ac8852c9dce1a936befa050ff15e179ae040"
+    },
+    {
+      "name": "tail-swing-3",
+      "seconds": 0.48,
+      "peak": 0.52,
+      "rms": 0.096967,
+      "sourceFiles": [
+        "sfx100v2_air_02.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "7a0f8eb5646b9cd72bd60a09b2e76a861ed95198b43d651c1090fb7664fd9535"
+    },
+    {
+      "name": "body-hit-3",
+      "seconds": 0.34708333333333335,
+      "peak": 0.72,
+      "rms": 0.135596,
+      "sourceFiles": [
+        "impactPunch_heavy_004.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "4036ff539c897b40dfeb5674c06a09cd5d84455ad0f6de243f8a0437abf807e1"
+    },
+    {
+      "name": "metal-hit-3",
+      "seconds": 0.462625,
+      "peak": 0.76,
+      "rms": 0.092475,
+      "sourceFiles": [
+        "impactPlate_heavy_002.ogg",
+        "impactMetal_heavy_002.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "f0f9ec888851204f0186fd483d64192fbe612460d4f45c3c75b87e7a2cd18cc6"
+    },
+    {
+      "name": "hydraulic-3",
+      "seconds": 0.34,
+      "peak": 0.53,
+      "rms": 0.118379,
+      "sourceFiles": [
+        "machine_03.ogg",
+        "sfx100v2_air_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "9b612e06899b2717f532e03f346032d74c8121399507166bd5987327321a5131"
+    },
+    {
+      "name": "parry-3",
+      "seconds": 0.553,
+      "peak": 0.75,
+      "rms": 0.064658,
+      "sourceFiles": [
+        "impactPlate_light_002.ogg",
+        "sfx100v2_metal_hit_01.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "2e10bf331a3073184db4fb48f48307321922bca8d6f74ae19a28b021e27eab0b"
+    },
+    {
+      "name": "explosion-3",
+      "seconds": 0.51925,
+      "peak": 0.8,
+      "rms": 0.055186,
+      "sourceFiles": [
+        "explosion.ogg",
+        "impactMetal_heavy_002.ogg",
+        "sfx100v2_stones_03.ogg",
+        "impactPunch_heavy_004.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "f9d961daaa1705767e4611b2efc90647b3a05b306d577ffa4f8755f0cab612cd"
+    },
+    {
+      "name": "land-3",
+      "seconds": 0.43245833333333333,
+      "peak": 0.73,
+      "rms": 0.122975,
+      "sourceFiles": [
+        "impactPunch_heavy_004.ogg",
+        "footstep_concrete_002.ogg",
+        "sfx100v2_stones_03.ogg"
+      ],
+      "processing": "silence trim, 10ms edge fades, gain; some layered with listed Foley",
+      "sha256": "f5d34db8dd5d77e7edb66704f7322d0fa7f261da51eb9f8f9c0408826e6df4aa"
+    },
+    {
+      "name": "rex-pain-1",
+      "seconds": 0.705125,
+      "peak": 0.5056693002150529,
+      "rms": 0.18999999999999997,
+      "sourceFiles": [
+        "lion-growls-stratcat322.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        1.27,
+        1.82
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.9835345019598414,
+      "sha256": "15c4eb13865daaebf50e248814e8b58bc9c0f2e7762314a5ffb9256bba07fc2b"
+    },
+    {
+      "name": "rex-pain-2",
+      "seconds": 0.6875,
+      "peak": 0.5404731483847465,
+      "rms": 0.19,
+      "sourceFiles": [
+        "lion-growls-stratcat322.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        3.6,
+        4.15
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.9839268502746148,
+      "sha256": "20d99e6d341cd9f5e8e7839ccb4c607db00a28e0553eeb95fd2cd76fda0eb364"
+    },
+    {
+      "name": "rex-pain-3",
+      "seconds": 0.7073333333333334,
+      "peak": 0.619440280366886,
+      "rms": 0.18999999999999997,
+      "sourceFiles": [
+        "lion-lament-roman-cgr.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        11.04,
+        11.62
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.9733982123829058,
+      "sha256": "54498821b2b50df3c95f6b406107531ca6e9202a533d97f494386fa62348e3c7"
+    },
+    {
+      "name": "rex-growl-1",
+      "seconds": 2,
+      "peak": 0.7454007487728257,
+      "rms": 0.19000000000000003,
+      "sourceFiles": [
+        "lion-lament-roman-cgr.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        0.08,
+        1.62
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.9142140913060349,
+      "sha256": "5f2f13ccd69b3980dab4ebf99a17a510aabf665fc211b1534aa7368c8ff9f172"
+    },
+    {
+      "name": "rex-growl-2",
+      "seconds": 1.7466666666666666,
+      "peak": 0.6317656077019695,
+      "rms": 0.19,
+      "sourceFiles": [
+        "lion-growls-stratcat322.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        0.72,
+        2.03
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.9865879100411052,
+      "sha256": "47e4db2bf1d271ff5d3ee76a822bd0bb4c6ea1901b96b33ede2f0d7aaaf425ae"
+    },
+    {
+      "name": "rex-roar-1",
+      "seconds": 2.4179166666666667,
+      "peak": 0.8,
+      "rms": 0.17778614846048166,
+      "sourceFiles": [
+        "lion-growls-stratcat322.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        3.32,
+        4.94
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.9851526196868117,
+      "sha256": "28e54f34cdf902c589d3c972f6cf5b6f355a847d7d7faebcf31bd536be7f7024"
+    },
+    {
+      "name": "rex-roar-2",
+      "seconds": 2.7575833333333333,
+      "peak": 0.7553903357815667,
+      "rms": 0.19,
+      "sourceFiles": [
+        "lion-lament-roman-cgr.mp3"
+      ],
+      "sourceIntervalSeconds": [
+        7.04,
+        8.86
+      ],
+      "processing": "CC0 lion foundation, moderate rate lowering, low chest layer from same recording, breath band, gentle saturation and65ms fades",
+      "energyBelow500Hz": 0.941779189258716,
+      "sha256": "6a9aa3c36a61c6817548ab198ce13a4ed442e01849f3e627088c493dcb02be27"
+    },
+    {
+      "name": "rockin-140-score",
+      "title": "Rockin_140.wav",
+      "author": "BaDoink",
+      "sourceUrl": "https://freesound.org/people/BaDoink/sounds/568755/",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "downloadUrl": "https://cdn.freesound.org/previews/568/568755_2019171-hq.mp3",
+      "seconds": 47.926,
+      "bpm": 140,
+      "sampleRate": 24000,
+      "channels": 1,
+      "peak": 0.65,
+      "rms": 0.19180152664679,
+      "processing": "official HQ MP3 decoded, mono 24kHz PCM conversion and gain normalization; arrangement, tempo and pitch unchanged",
+      "loop": "author-published heavy rock loop",
+      "sha256": "2734cede6497a094db4554764810f03231e5386f0fbf2b90951c7edb97ed6ee2"
+    },
+    {
+      "name": "engine-1",
+      "seconds": 3.4,
+      "peak": 0.5407288511942605,
+      "rms": 0.18,
+      "sourceFiles": [
+        "case-backhoe-discrete.mp3"
+      ],
+      "author": "Discrete",
+      "title": "Concrete_demolition.wav",
+      "sourceUrl": "https://freesound.org/people/Discrete/sounds/70983/",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "downloadUrl": "https://cdn.freesound.org/previews/70/70983_594026-hq.mp3",
+      "sourceIntervalSeconds": [
+        37.15,
+        40.55
+      ],
+      "processing": "original pitch/speed; engine-heavy excerpt, subsonic removal, gentle low-pass and chest support, 160ms fades, gain; load excerpts retain recorded increase with gradual gain",
+      "sha256": "8f5b7e65a1e163847d2f3efb412237fca2f80e8101654424da4c0eba904cd8f3"
+    },
+    {
+      "name": "engine-2",
+      "seconds": 3.6,
+      "peak": 0.5211943672388474,
+      "rms": 0.17999999999999997,
+      "sourceFiles": [
+        "case-backhoe-discrete.mp3"
+      ],
+      "author": "Discrete",
+      "title": "Concrete_demolition.wav",
+      "sourceUrl": "https://freesound.org/people/Discrete/sounds/70983/",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "downloadUrl": "https://cdn.freesound.org/previews/70/70983_594026-hq.mp3",
+      "sourceIntervalSeconds": [
+        102.9,
+        106.5
+      ],
+      "processing": "original pitch/speed; engine-heavy excerpt, subsonic removal, gentle low-pass and chest support, 160ms fades, gain; load excerpts retain recorded increase with gradual gain",
+      "sha256": "cd2fb8e7850651a65793b2e26163118881978cf4f4151d9aee6412340c7473e0"
+    },
+    {
+      "name": "engine-rev-1",
+      "seconds": 3.6,
+      "peak": 0.68,
+      "rms": 0.18963836791724523,
+      "sourceFiles": [
+        "case-backhoe-discrete.mp3"
+      ],
+      "author": "Discrete",
+      "title": "Concrete_demolition.wav",
+      "sourceUrl": "https://freesound.org/people/Discrete/sounds/70983/",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "downloadUrl": "https://cdn.freesound.org/previews/70/70983_594026-hq.mp3",
+      "sourceIntervalSeconds": [
+        16,
+        19.6
+      ],
+      "processing": "original pitch/speed; engine-heavy excerpt, subsonic removal, gentle low-pass and chest support, 160ms fades, gain; load excerpts retain recorded increase with gradual gain",
+      "sha256": "9f49d95d691788df3558750758b3911f4a4831fa2e377747b4719f73b59a4b7a"
+    },
+    {
+      "name": "engine-rev-2",
+      "seconds": 3.8,
+      "peak": 0.68,
+      "rms": 0.18163944396486056,
+      "sourceFiles": [
+        "case-backhoe-discrete.mp3"
+      ],
+      "author": "Discrete",
+      "title": "Concrete_demolition.wav",
+      "sourceUrl": "https://freesound.org/people/Discrete/sounds/70983/",
+      "license": "CC0-1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "downloadUrl": "https://cdn.freesound.org/previews/70/70983_594026-hq.mp3",
+      "sourceIntervalSeconds": [
+        35,
+        38.8
+      ],
+      "processing": "original pitch/speed; engine-heavy excerpt, subsonic removal, gentle low-pass and chest support, 160ms fades, gain; load excerpts retain recorded increase with gradual gain",
+      "sha256": "5381de48a0fe2e3eec32109ea0ae392ed60fb0881c1be0baf8399cd66dca854c"
+    }
+  ]
+}

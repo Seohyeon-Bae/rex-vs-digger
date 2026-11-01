@@ -1,0 +1,67 @@
+/* 1.9.0 가독성 시안 (Claude). 모든 기존 CSS 다음에 읽힌다. 레이아웃은 바꾸지 않고 글자 크기·대비·줄바꿈만 정리한다.
+   기준: 정보 글자 11px 이상(모바일 11~12px), 아이콘 버튼 안의 보조 표기 8px 이상, 밝은 바탕 회색 글자 대비 4.5:1 이상. */
+:root{--ui-muted:#566273;--ui-muted-strong:#3f4a59;--ui-on-dark-muted:#d2d8c6}
+
+/* 매치 설정 */
+html body .count-row label span{white-space:nowrap;font-size:12px;color:var(--ui-muted)}
+html body .field-caption{font-size:12px;color:var(--ui-muted)}
+html body #setupHint{font-size:11px;color:var(--ui-muted)}
+html body .character-info-button{color:#3e5778;border-color:#7d93b0}
+
+/* 전장 점수판 (어두운 바탕) */
+html body .score-team>span{font-size:11px;letter-spacing:0}
+html body .battle-time small,html body .battle-time em{font-size:10px;letter-spacing:0;color:var(--ui-on-dark-muted)}
+
+/* 카메라 버튼 안 보조 표기: 버튼 크기는 유지하고 최소 8px */
+html body #battlefield .camera-controls #autoFollow em,html body #battlefield .camera-controls #autoFollow .auto-state,
+html body .camera-controls #autoFollow .camera-label em,html body .auto-state,
+html body #battlefield .mobile-battle-dock #autoFollow em,html body #battlefield .mobile-battle-dock #autoFollow .auto-state{font-size:8px;line-height:8px;letter-spacing:0}
+html body .camera-controls .camera-zoom{font-size:8.5px;line-height:9px}
+html body #battlefield .camera-controls .camera-number,html body .camera-controls #viewNext .camera-number,
+html body #battlefield .mobile-battle-dock .camera-number,html body #battlefield .mobile-dock-row .camera-number{font-size:8px;min-width:10px;height:11px}
+html body .battle-secondary-controls .camera-controls .camera-number{color:#4f6380}
+html body #battlefield .mobile-dock-row .view-option-items .setting-check:after{font-size:9px}
+
+/* 재생·보기 옵션 */
+html body .speed-options button,html body .playback .speed-options button{font-size:12px;color:var(--ui-muted-strong)}
+html body .battle-secondary-controls .view-option-items .setting-check,html body #battlefield .view-option-items .setting-check{font-size:11px;color:var(--ui-muted-strong)}
+
+/* 전투 기록·누적 피해 */
+html body .intel-label{font-size:12px;color:var(--ui-muted-strong)}
+html body .intel-label small{font-size:10px}
+html body .event-feed p{font-size:12px;line-height:1.6;color:var(--ui-muted-strong)}
+html body .damage-row{font-size:12px;color:var(--ui-muted-strong)}
+html body .damage-row strong{font-size:14px;font-weight:600}
+html body .damage-row small{font-size:10px;color:var(--ui-muted)}
+
+/* 조작 안내 */
+html body .zoom-hint{font-size:11.5px;color:#4a6283}
+html body .camera-guide .camera-hint{font-size:12px;color:#4a6283}
+html body .guide-items b{font-size:11.5px;color:#3f5470}
+html body .guide-items small{font-size:11px;color:var(--ui-muted);line-height:1.5}
+
+/* 하단·상단 */
+html body .rules-note{color:#7d8794}
+html body .rules-note p{font-size:11px;color:var(--ui-muted);line-height:1.7}
+html body .rules-note b{color:var(--ui-muted-strong);font-weight:600}
+html body .history-btn{font-size:12px;color:var(--ui-muted-strong)}
+html body .history-btn span{font-size:11px}
+html body .history-item small{font-size:11px;color:var(--ui-muted)}
+html body .version-tag{font-size:11px}
+html body #patchNotesBtn{font-size:12px}
+
+@media(max-width:760px){
+ html body .event-feed p,html body .damage-row{font-size:12px}
+ html body .zoom-hint{font-size:11px}
+ html body .rules-note p{font-size:11px}
+}
+
+/* 키보드 초점이 보이도록 (마우스 클릭에는 표시 안 함) */
+html body button:focus-visible,html body input:focus-visible,html body select:focus-visible,html body summary:focus-visible{outline:2px solid #3d6fb3;outline-offset:2px}
+
+/* Local 1.9.0: readable character skill details */
+html body .character-skill>p{font-size:13px;line-height:1.65;color:#414d3b}
+html body .character-skill .character-skill-facts,html body .character-skill-facts{font-size:12px;line-height:1.65;color:#475341;white-space:pre-line}
+html body .character-skill>small{font-size:11px;color:#56624e;display:block;margin:5px 0}
+html body .skill-rules{font-size:12px;line-height:1.65;color:#475341;padding:8px 0}
+html body .skill-rules summary{cursor:pointer;font-weight:600}

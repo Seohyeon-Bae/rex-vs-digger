@@ -1,0 +1,20 @@
+/* Claude 1.9.x 제안: 자동 추적·하이라이트 버튼을 글자 없는 아이콘 버튼 한 쌍으로 정리.
+   켜짐 = 강조색 바탕 + 오른쪽 위 불빛 점, 꺼짐 = 흐린 아이콘. 이름·설명은 title/aria-label에 남는다. */
+html body .camera-controls :is(#autoFollow,#directorBtn){
+ position:relative;display:inline-flex!important;flex-direction:row!important;align-items:center;justify-content:center;
+ width:36px;height:36px;min-width:36px;padding:0!important;gap:0!important;border-radius:9px;
+ color:var(--ink-soft,#6b7480);background:transparent;transition:background-color .15s,color .15s,box-shadow .15s}
+html body .camera-controls :is(#autoFollow,#directorBtn) :is(.camera-label,em,.auto-state){display:none!important}
+html body .camera-controls :is(#autoFollow,#directorBtn) svg{width:22px!important;height:22px!important;margin:0!important}
+html body .camera-controls :is(#autoFollow,#directorBtn):hover{background:rgba(65,98,137,.10)}
+html body .camera-controls :is(#autoFollow,#directorBtn)[aria-pressed=true]{
+ color:var(--accent,#416289);background:rgba(65,98,137,.16);box-shadow:inset 0 0 0 1.5px rgba(65,98,137,.45)}
+html body .camera-controls :is(#autoFollow,#directorBtn)::after{
+ content:"";position:absolute;top:4px;right:4px;width:6px;height:6px;border-radius:50%;background:transparent;transition:background-color .15s,box-shadow .15s}
+html body .camera-controls :is(#autoFollow,#directorBtn)[aria-pressed=true]::after{background:#4fbf6a;box-shadow:0 0 0 1.5px #fff,0 0 5px rgba(79,191,106,.8)}
+html body .camera-controls :is(#autoFollow,#directorBtn):focus-visible{outline:2px solid var(--accent,#416289);outline-offset:2px}
+/* 전투 화면 위(모바일 도크·전체화면) 어두운 바탕 */
+html body #battlefield .camera-controls :is(#autoFollow,#directorBtn){width:30px;height:30px;min-width:30px;color:rgba(255,255,255,.72)}
+html body #battlefield .camera-controls :is(#autoFollow,#directorBtn) svg{width:18px!important;height:18px!important}
+html body #battlefield .camera-controls :is(#autoFollow,#directorBtn)[aria-pressed=true]{color:#fff;background:rgba(120,160,210,.32);box-shadow:inset 0 0 0 1.5px rgba(160,195,235,.6)}
+html body #battlefield .camera-controls :is(#autoFollow,#directorBtn)[aria-pressed=true]::after{box-shadow:0 0 0 1.5px rgba(20,24,28,.9),0 0 5px rgba(79,191,106,.8)}

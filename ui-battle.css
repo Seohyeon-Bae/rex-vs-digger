@@ -1,0 +1,63 @@
+/* 1.9.0 전투 흐름 UI (Claude): 결과 카드, 자동 일시정지 안내. app.js가 이 파일을 불러온다. */
+
+
+/* 결과 카드 */
+html body .result-overlay{padding:12px}
+html body .result-card{box-sizing:border-box;min-width:0;width:min(420px,100%);max-height:100%;overflow:auto;padding:22px 22px 18px;border:0;border-radius:10px;background:var(--ui-panel);color:var(--ui-text);box-shadow:0 14px 40px #0b121c4d;border-top:6px solid var(--ui-line)}
+html body .result-overlay[data-winner="rex"] .result-card{border-top-color:var(--ui-rex)}
+html body .result-overlay[data-winner="dig"] .result-card{border-top-color:var(--ui-dig)}
+html body .result-card .eyebrow{font-size:12px;color:var(--ui-muted);letter-spacing:.5px}
+html body .result-card h2{margin:6px 0 4px;font-size:28px;font-weight:800;letter-spacing:-.5px}
+html body .result-overlay[data-winner="rex"] .result-card h2{color:var(--ui-rex-ink)}
+html body .result-overlay[data-winner="dig"] .result-card h2{color:var(--ui-dig-ink)}
+html body .result-card p#resultDesc{margin:0 0 12px;font-size:13px;line-height:1.6;color:var(--ui-muted)}
+
+html body .result-stats{display:grid;grid-template-columns:auto 1fr 1fr;gap:0;margin:4px 0 6px;border:1px solid var(--ui-line);border-radius:var(--ui-radius);overflow:hidden;text-align:left;font-variant-numeric:tabular-nums}
+html body .result-stats>*{padding:7px 10px;font-size:13px;border-top:1px solid var(--ui-line-soft)}
+html body .result-stats>.rs-head{border-top:0;background:#f6f8fa;font-size:12px;font-weight:700}
+html body .result-stats>.rs-head.team-rex{color:var(--ui-rex-ink)}
+html body .result-stats>.rs-head.team-dig{color:var(--ui-dig-ink)}
+html body .result-stats>.rs-label{color:var(--ui-muted);font-size:12px;white-space:nowrap}
+html body .result-stats>.rs-value{font-weight:700;color:var(--ui-text)}
+html body .result-stats>.rs-value.is-better{background:var(--ui-accent-soft)}
+html body .result-stats .rs-bar{display:block;height:5px;margin-top:4px;border-radius:3px;background:var(--ui-line-soft);overflow:hidden}
+html body .result-stats .rs-bar i{display:block;height:100%;border-radius:3px}
+html body .result-stats .team-rex .rs-bar i{background:var(--ui-rex)}
+html body .result-stats .team-dig .rs-bar i{background:var(--ui-dig)}
+html body .result-mvp{margin:8px 0 0;font-size:13px;color:var(--ui-muted)}
+html body .result-mvp b{color:var(--ui-text)}
+
+/* 버튼: 재대결만 주 버튼 */
+html body .result-actions{margin-top:16px;gap:8px}
+html body .result-actions button{min-height:40px;padding:0 14px;border-radius:var(--ui-radius-sm);font-size:13px;font-weight:600;border:1px solid var(--ui-line);background:#fff;color:var(--ui-text)}
+html body .result-actions #replayBtn{background:var(--ui-accent-strong);border-color:var(--ui-accent-strong);color:#fff}
+html body .result-actions #battleDetailsBtn{background:#fff;color:var(--ui-text);border-color:var(--ui-line)}
+html body .result-actions button:hover{border-color:#8fa3bf}
+
+@media (max-width:560px){
+ html body .result-card{padding:16px 14px 14px}
+ html body .result-card h2{font-size:24px}
+ html body .result-stats>*{padding:6px 8px}
+ html body .result-actions button{padding:0 10px}
+}
+
+/* 짧은 안내(토스트) */
+html body .ui-toast{position:absolute;left:50%;top:92px;z-index:40;transform:translate(-50%,-8px);max-width:calc(100% - 32px);padding:9px 14px;border-radius:999px;background:#1f2b3dee;color:#fff;font-size:13px;line-height:1.4;box-shadow:0 6px 20px #0005;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;text-align:center}
+html body .ui-toast.is-visible{opacity:1;transform:translate(-50%,0)}
+
+/* Integrated mobile layout: one compact row; view checkboxes stack in their own column. */
+@media(max-width:760px),(pointer:coarse){
+ html body #battlefield .mobile-dock-row{--dock-btn:clamp(21px,calc((100vw - 100px - env(safe-area-inset-left) - env(safe-area-inset-right))/11),32px);display:flex!important;flex-wrap:nowrap!important;align-items:center;justify-content:space-between;gap:3px;height:auto!important;padding:0!important}
+ html body #battlefield .mobile-dock-row>.fullscreen-controls{position:static!important;transform:none!important;display:flex!important;flex:0 0 auto!important;gap:1px!important;width:auto!important;max-width:none!important;margin:0!important;padding:0!important}
+ html body #battlefield .mobile-dock-row>.fullscreen-controls>*,html body #battlefield .mobile-dock-row>.camera-controls>button{flex:0 0 var(--dock-btn)!important;width:var(--dock-btn)!important;min-width:var(--dock-btn)!important;max-width:var(--dock-btn)!important;height:var(--dock-btn)!important;min-height:var(--dock-btn)!important;padding:0!important}
+ html body #battlefield .mobile-dock-row>.fullscreen-controls>select{-webkit-appearance:none;appearance:none;background-image:none!important;font-size:8.5px!important;text-align:center;text-align-last:center}
+ html body #battlefield .mobile-dock-row>.battle-view-options{flex:0 0 55px!important;margin:0!important;padding:0!important;background:none!important;border:0!important}
+ html body #battlefield .mobile-dock-row .view-option-items{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:1px!important;padding:0!important}
+ html body #battlefield .mobile-dock-row .setting-check{margin:0!important;min-height:0!important;font-size:8.5px!important;line-height:12px!important;gap:2px!important;white-space:nowrap}
+ html body #battlefield .mobile-dock-row .setting-check input{width:10px!important;height:10px!important;margin:0!important}
+ html body #battlefield .mobile-dock-row>.camera-controls{position:static!important;display:flex!important;gap:1px!important;margin:0!important;flex:0 0 auto!important}
+ html body #battlefield .mobile-dock-row button svg{width:16px!important;height:16px!important}
+ html body #battlefield .mobile-dock-row #autoFollow::before,html body #battlefield .mobile-dock-row #directorBtn::before{font-size:5.5px!important;line-height:6px!important;letter-spacing:-.1px!important}
+ html body #battlefield .mobile-dock-row :is(.auto-state,.director-state){font-size:6.5px!important;line-height:7px!important;bottom:0!important}
+ html body #battlefield .mobile-dock-row .zoom-status{display:none!important}
+}

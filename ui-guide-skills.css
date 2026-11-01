@@ -1,0 +1,13 @@
+/* Claude 1.9.x 제안: 캐릭터 소개 스킬 탭 — 스킬 아이콘, 핵심 용어 강조와 뜻 표시. ui-theme.css 토큰 사용(없으면 기본값). */
+html body .character-skill h3{display:flex;align-items:center;gap:8px}
+html body .skill-icon-mini{flex:none;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:var(--ui-radius-sm,6px);background:var(--ui-accent-soft,#eef3f9);color:var(--ui-accent-strong,#314568)}
+html body .skill-icon-mini svg{width:24px;height:24px;stroke:currentColor;stroke-width:2.4}
+html body .character-skill.locked .skill-icon-mini{opacity:.45}
+
+/* 핵심 용어: 점선 밑줄 + 굵게. 마우스 올림·키보드 초점·누름(포커스)에서 뜻 표시 */
+html body .kw{position:relative;font-weight:700;color:var(--ui-accent-strong,#314568);border-bottom:1px dotted currentColor;cursor:help;outline:none}
+html body .kw::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);z-index:20;width:max-content;max-width:min(240px,70vw);transform:translateX(-50%);padding:7px 9px;border-radius:var(--ui-radius-sm,6px);background:#1f2b3d;color:#fff;font-size:12px;font-weight:400;line-height:1.5;white-space:normal;box-shadow:0 6px 18px #0004;opacity:0;pointer-events:none;transition:opacity .12s}
+html body .kw:hover::after,html body .kw:focus::after{opacity:1}
+html body .kw.tip-left::after{left:auto;right:0;transform:none}
+html body .kw.tip-right::after{left:0;transform:none}
+html body .kw:focus-visible{box-shadow:0 0 0 2px var(--ui-accent,#416289);border-radius:2px}

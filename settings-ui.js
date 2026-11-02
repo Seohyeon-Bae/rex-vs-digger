@@ -9,7 +9,7 @@ export function createSettings(){
  for(const key of ['muted','showHealth','shake'])if(typeof view[key]!=='boolean')view[key]=DEFAULT_VIEW[key];
  if((stored.version||1)<2){if(view.music===.65||view.music===.7)view.music=.28;if(view.sfx===.8)view.sfx=1;}if(!['high','medium','low'].includes(view.quality))view.quality='high';if(![.25,.6,1].includes(view.effects))view.effects=1;
  const dialog=document.createElement('dialog');dialog.id='settingsDialog';dialog.className='settings-dialog';dialog.setAttribute('aria-labelledby','settingsTitle');
- dialog.innerHTML='<div class="settings-head"><div><small>v1.9.2</small><h2 id="settingsTitle">상세 설정</h2></div><button type="button" class="dialog-close" aria-label="상세 설정 닫기">×</button></div><p class="settings-notice">전투 설정은 다음 전투부터 적용됩니다.</p><div id="settingsSections"></div><div class="settings-footer"><button type="button" id="restoreAll">↺ 전체 기본값</button><button type="button" id="settingsDone" class="primary">완료</button></div>';
+ dialog.innerHTML='<div class="settings-head"><div><small>v1.9.3</small><h2 id="settingsTitle">상세 설정</h2></div><button type="button" class="dialog-close" aria-label="상세 설정 닫기">×</button></div><p class="settings-notice">전투 설정은 다음 전투부터 적용됩니다.</p><div id="settingsSections"></div><div class="settings-footer"><button type="button" id="restoreAll">↺ 전체 기본값</button><button type="button" id="settingsDone" class="primary">완료</button></div>';
  document.body.append(dialog);document.head.append(Object.assign(document.createElement('link'),{rel:'stylesheet',href:'ui-settings.css'}));const body=$('settingsSections'),controls=[];
  if((stored.version||1)<3){if(config.tuning.rex.armor===.08)config.tuning.rex.armor=.13;if(config.tuning.dig.armor===.13)config.tuning.dig.armor=.18;}
  if((stored.version||1)<4&&config.tuning.dig.armor===.18)config.tuning.dig.armor=.23;
@@ -50,7 +50,7 @@ export function createSettings(){
  }
  const skill=section('현재 능력치',true);
  for(const team of ['rex','dig']){const node=$(team==='rex'?'rexSkill':'digSkill').closest('.crew-control');const head=document.createElement('h3');head.className='team-head team-'+team;head.textContent=team==='rex'?'티라노':'포크레인';if(!node.querySelector('.team-head'))node.prepend(head);skill.content.append(node);const input=$(team+'Skill');input.value=config[team+'Skill'];input.addEventListener('change',()=>{config[team+'Skill']=Number(input.value);changed(true);});controls.push({section:skill.d,refresh(){input.value=config[team+'Skill'];},reset(notify=true){config[team+'Skill']=5;if(notify)changed(true);}});}
- skill.content.append($('randomSetup').parentElement);
+ /* 수량 무작위 설정은 매치 설정 패널(빠른 설정 아래)에 그대로 둔다. */
  const stats=section('기본 능력치'),statGrid=document.createElement('div');statGrid.className='team-panels';stats.content.append(statGrid);
  for(const team of ['rex','dig']){const panel=document.createElement('section'),head=document.createElement('h3'),body=document.createElement('div');panel.className='team-panel team-'+team;head.className='team-panel-head';head.textContent=team==='rex'?'티라노':'포크레인';body.className='team-panel-body';panel.append(head,body);statGrid.append(panel);const sub={d:stats.d,content:body};
   field(sub,{path:`tuning.${team}.hp`,label:'체력',min:.25,max:3,base:()=>unitStats(team,config[team+'Skill']).hp});

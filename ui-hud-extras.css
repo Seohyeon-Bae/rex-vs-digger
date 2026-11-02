@@ -63,3 +63,131 @@ html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-r
 }
 /* PC 일반 화면 조작바: 24px 아이콘이 AUTO/ON 글자와 붙어 보여 18px로 줄이고 가운데에 둔다. */
 @media(min-width:761px) and (pointer:fine){html body .arena-panel>.playback .camera-controls>button:is(#autoFollow,#directorBtn) svg{width:18px!important;height:18px!important;position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;margin:0!important}}
+
+/* 대규모 전투 경고: 경고답게(아이콘·굵은 제목·주황 테두리), 밝은 패널에서도 읽히게 */
+html body .large-battle-warning:not([hidden]){grid-column:1/-1;display:flex;flex-direction:column;gap:3px;margin:10px 0;padding:10px 12px 10px 38px;position:relative;font-size:12.5px;line-height:1.45;color:#6b3300;background:#fff1dc;border:1px solid #e8892a;border-left:5px solid #d9640f;border-radius:6px;box-shadow:0 1px 0 #e8892a33}
+html body .large-battle-warning strong{font-size:13.5px;font-weight:800;color:#b3420a;letter-spacing:-.1px}
+html body .large-battle-warning::before{content:"!";position:absolute;left:11px;top:10px;width:19px;height:19px;border-radius:50%;background:#d9640f;color:#fff;font:900 13px/19px system-ui,sans-serif;text-align:center}
+
+/* 플레이 가이드(#helpDialog): 아이콘 버튼 → 예시 애니메이션 + 설명 */
+html body dialog.guide-dialog{width:min(600px,calc(100vw - 32px));max-width:min(600px,calc(100vw - 32px));max-height:min(88dvh,780px);overflow:auto}
+html body .guide-dialog h2{margin-bottom:2px}
+html body .guide-dialog .guide-hint{margin:0 0 12px;font-size:12px;color:var(--ui-muted,#777)}
+html body .guide-dialog :is(.guide-steps,.guide-tiles,.guide-chips) button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html body .guide-dialog .gi{display:grid;place-items:center;width:40px;height:40px;border-radius:10px;background:#e9ecdf;color:#2f3a24;font-style:normal}
+html body .guide-dialog .gi svg{width:24px;height:24px}
+html body .guide-dialog .gi-text{font:800 14px/1 system-ui,sans-serif}
+html body .guide-dialog .gi-count{display:flex;gap:4px;width:auto;padding:0 8px}
+html body .guide-dialog .gi-count b{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid #c9cdbd;font-size:14px}
+html body .guide-dialog .guide-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 6px;counter-reset:step}
+html body .guide-dialog .guide-steps button{counter-increment:step;position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px 12px;border:0;border-radius:12px;background:#3d4a2e;color:#fff;text-align:center}
+html body .guide-dialog .guide-steps button::before{content:counter(step);position:absolute;left:9px;top:7px;font:800 12px/1 system-ui,sans-serif;opacity:.7}
+html body .guide-dialog .guide-steps .gi{background:#ffffff1f;color:#fff}
+html body .guide-dialog .guide-steps .gi-count b{background:#ffffff26;border-color:#ffffff55;color:#fff}
+html body .guide-dialog .guide-steps b{font-size:13.5px}
+html body .guide-dialog .guide-h{margin:14px 0 6px;font-size:12px;letter-spacing:.06em;color:var(--ui-muted,#777)}
+html body .guide-dialog .guide-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px}
+html body .guide-dialog .guide-tiles button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 9px;border:1px solid #e1e3d8;border-radius:10px;background:#fff;text-align:center;transition:border-color .15s,background .15s}
+html body .guide-dialog .guide-tiles button:hover{border-color:#b9bfa8}
+html body .guide-dialog .guide-tiles b{font-size:12.5px}
+html body .guide-dialog .guide-chips{display:flex;flex-wrap:wrap;gap:6px}
+html body .guide-dialog .guide-chips button{padding:6px 11px;border:1px solid #e1e3d8;border-radius:999px;background:#f1f2ec;font-size:12.5px;color:#26301f}
+html body .guide-dialog :is(.guide-tiles,.guide-chips) button.is-active{border-color:#3d4a2e;background:#eef1e4;box-shadow:inset 0 0 0 1px #3d4a2e}
+html body .guide-dialog .guide-steps button.is-active{box-shadow:0 0 0 3px #a8b88a}
+html body .guide-dialog .guide-pop{margin:8px 0 2px;padding:10px 12px;border-radius:10px;background:#26301f;color:#f4efdf;font-size:13px;line-height:1.5;animation:guide-pop .18s ease-out}
+
+
+@keyframes guide-pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@media(max-width:600px){html body .guide-dialog .guide-tiles{grid-template-columns:repeat(3,1fr)}html body .guide-dialog .guide-tiles button{padding:8px 2px 7px}html body .guide-dialog .gi{width:34px;height:34px}html body .guide-dialog .gi svg{width:21px;height:21px}html body .guide-dialog .guide-tiles b{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html body .guide-dialog .guide-pop{animation:none}}/* 실제 화면 위 예시: 스포트라이트 + 포인터 + 설명 말풍선 */
+.coach{position:fixed;inset:0;z-index:2147483000;cursor:default}
+.coach-dim{position:fixed;background:#0b0e09a6}.coach-spot{position:fixed;border-radius:12px;box-shadow:0 0 0 2px #ffd36b,0 0 14px 2px #ffd36b66;pointer-events:none;animation:coach-glow 2.6s ease-in-out infinite}
+@keyframes coach-glow{0%,100%{box-shadow:0 0 0 2px #ffd36b,0 0 10px 1px #ffd36b55}50%{box-shadow:0 0 0 2px #ffe39a,0 0 22px 5px #ffd36b88}}
+.coach-anchor{position:fixed;width:0;height:0;pointer-events:none}
+.coach-cursor{position:absolute;left:-4px;top:-3px;filter:drop-shadow(0 2px 3px #0008)}
+.coach-finger{display:block;width:30px;height:30px;margin:-12px 0 0 -11px;border-radius:50%;background:#ffffffcc;border:2px solid #26301f}
+.coach-ripple{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border-radius:50%;border:3px solid #ffd36b;opacity:0}
+.coach-key{position:absolute;left:18px;top:-36px;padding:3px 8px;border-radius:6px;background:#fff;border:1px solid #26301f;box-shadow:0 2px 0 #26301f;font:800 12px/1.2 system-ui,sans-serif;color:#26301f;white-space:nowrap}
+.coach-bubble{position:fixed;padding:12px 14px;border-radius:12px;background:#fffdf6;color:#26301f;box-shadow:0 10px 30px #0006;font-size:13.5px;line-height:1.5}
+.coach-bubble b{display:block;margin-bottom:4px;font-size:15px}
+.coach-bubble p{margin:0 0 10px}
+.coach-actions{display:flex;justify-content:flex-end;gap:6px}
+.coach-actions button{font:700 13px/1 system-ui,sans-serif;padding:8px 12px;border-radius:8px;border:1px solid #cfd3c3;background:#fff;color:#26301f;cursor:pointer}
+.coach-actions .coach-back{background:#3d4a2e;border-color:#3d4a2e;color:#fff}
+@media(prefers-reduced-motion:reduce){.coach-spot{animation:none}}html body .topbar #helpBtn{display:none}
+html body .guide-fab{position:fixed;right:16px;bottom:16px;z-index:900;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 16px 0 8px;border:0;border-radius:999px;background:#ffd36b;color:#26301f;font:800 14px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 6px 18px #0004,0 1px 0 #0003}
+html body .guide-fab span{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#26301f;color:#ffd36b;font-size:15px}
+html body .guide-fab:hover{background:#ffdf8e}
+@media(max-width:760px),(pointer:coarse){html body .guide-fab{right:12px;bottom:calc(12px + env(safe-area-inset-bottom));height:40px;padding:0 13px 0 6px;font-size:13px}html body .guide-fab span{width:26px;height:26px}}/* 가이드 아이콘 통일: 모든 타일·단계가 같은 크기·모양의 아이콘 칸 */
+html body .guide-dialog .gi{display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:12px;background:#eef0e6;border:1px solid #dfe2d4;color:#2f3a24;font:800 15px/1 system-ui,sans-serif;font-style:normal}
+html body .guide-dialog .gi svg{width:22px;height:22px;stroke:currentColor}
+html body .guide-dialog .gi-count{display:flex;gap:3px;padding:0}
+html body .guide-dialog .gi-count b{display:grid;place-items:center;width:17px;height:17px;border-radius:50%;background:none;border:1.8px solid currentColor;font-size:12px;line-height:1}
+html body .guide-dialog .guide-steps .gi{background:#ffffff1a;border-color:#ffffff33;color:#fff}
+html body .guide-dialog .guide-steps .gi-count b{background:none;border-color:currentColor;color:#fff}
+@media(max-width:600px){html body .guide-dialog .gi{width:38px;height:38px;border-radius:10px}html body .guide-dialog .gi svg{width:20px;height:20px}}html body .guide-dialog .gi.gi-label{width:auto;min-width:44px;padding:0 9px;font:800 12.5px/1 system-ui,sans-serif;white-space:nowrap}
+html body .guide-dialog .gi.gi-hp{padding:0 7px}
+html body .guide-dialog .gi-bar{display:block;width:30px;height:7px;overflow:hidden}
+html body .guide-dialog .gi-bar i{display:block;width:68%;height:100%}
+/* 시작 단계도 다른 타일과 같은 흰 카드, 순서는 작은 번호로만 */
+html body .guide-dialog .guide-steps button{background:#fff;color:#26301f;border:1px solid #e1e3d8;padding:12px 6px 10px}
+html body .guide-dialog .guide-steps button::before{left:8px;top:8px;width:18px;height:18px;border-radius:50%;background:#26301f;color:#fff;font-size:11px;line-height:18px;text-align:center;opacity:1}
+html body .guide-dialog .guide-steps .gi{background:#eef0e6;border-color:#dfe2d4;color:#2f3a24}
+html body .guide-dialog .guide-steps .gi-count b{color:#2f3a24}
+html body .guide-dialog .guide-steps b{font-size:13px}
+html body .guide-dialog .guide-steps button:hover{border-color:#b9bfa8}
+html body .guide-dialog .guide-steps button.is-active{box-shadow:inset 0 0 0 1px #3d4a2e;border-color:#3d4a2e}.coach-anchor{transition:left .45s ease-in-out,top .45s ease-in-out}
+@media(prefers-reduced-motion:reduce){.coach-anchor{transition:none}}
+.coach[popover]{position:fixed;inset:0;width:auto;height:auto;margin:0;padding:0;border:0;background:transparent;overflow:visible;color:inherit}
+/* 시연 입력 표시: 포인터 옆에 지금 쓰는 입력(마우스 왼쪽·휠·Shift, 터치 제스처) */
+.coach-input{position:absolute;left:22px;top:-50px;display:inline-flex;align-items:center;gap:6px;padding:5px 9px 5px 6px;border-radius:999px;background:#26301f;color:#fff;font:800 12.5px/1 system-ui,sans-serif;white-space:nowrap;box-shadow:0 4px 12px #0005}
+.coach-input[hidden]{display:none}
+.coach-input svg{width:20px;height:20px;color:#ffd36b}
+.coach-input kbd{display:inline-block;padding:2px 5px;border-radius:4px;background:#fff;color:#26301f;font:800 11px/1.1 system-ui,sans-serif;box-shadow:0 1px 0 #0006}
+.coach-cursor{transition:opacity .2s}/* 가이드 창이 열려 있거나 시연 중에는 실행 버튼을 숨김 */
+html body:has(#helpDialog[open]) .guide-fab,html body:has(.coach) .guide-fab{display:none}
+html body .guide-dialog .guide-tiles{grid-template-columns:repeat(4,1fr)}
+html body .guide-dialog .guide-tiles b{word-break:keep-all;text-wrap:balance}
+@media(max-width:600px){html body .guide-dialog .guide-tiles{grid-template-columns:repeat(3,1fr)}}/* 시연 전환: 시연 화면은 서서히 사라지고, 가이드 창은 서서히 나타남. 말풍선은 옮길 때 미끄러지듯 */
+.coach{transition:opacity .2s ease}
+.coach.is-leaving{opacity:0;pointer-events:none}
+.coach-bubble{transition:left .35s ease,top .35s ease}
+html body dialog.guide-dialog[open]{animation:guide-in .22s ease-out}
+@keyframes guide-in{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.coach,.coach-bubble{transition:none}html body dialog.guide-dialog[open]{animation:none}}/* 공간이 좁을 때의 작은 말풍선: 제목·설명·버튼을 한 줄 흐름으로 */
+.coach-bubble.is-compact{padding:8px 10px;font-size:12.5px;line-height:1.4;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.coach-bubble.is-compact b{margin:0;font-size:13.5px}
+.coach-bubble.is-compact p{margin:0;flex:1 1 220px}
+.coach-bubble.is-compact .coach-actions{margin-left:auto}
+.coach-bubble.is-compact .coach-actions button{padding:6px 10px;font-size:12px}html.coach-room dialog[open]:not(#helpDialog){max-height:calc(100dvh - 300px);overflow:auto}
+/* 가이드 타일: 작은 아이콘, 섹션마다 한 줄 */
+html body .guide-dialog .guide-tiles{grid-template-columns:repeat(auto-fit,minmax(60px,1fr));gap:5px}
+html body .guide-dialog .guide-tiles button{padding:8px 2px 7px;gap:5px;border-radius:9px}
+html body .guide-dialog .guide-tiles .gi{width:34px;height:34px;border-radius:9px}
+html body .guide-dialog .guide-tiles .gi svg{width:19px;height:19px}
+html body .guide-dialog .guide-tiles .gi.gi-label{width:auto;min-width:34px;padding:0 6px;font-size:11px}
+html body .guide-dialog .guide-tiles .gi-bar{width:22px;height:6px}
+html body .guide-dialog .guide-tiles b{font-size:11.5px;line-height:1.25}
+@media(max-width:600px){html body .guide-dialog .guide-tiles{grid-template-columns:repeat(4,1fr)}}
+/* 설명 말풍선 다듬기: 왼쪽 강조선, 단계적 글자 크기, 버튼 정렬 */
+.coach-bubble{border-radius:14px;border:1px solid #e6e0c8;border-left:4px solid #ffd36b;background:#fffdf7;box-shadow:0 14px 34px #00000055,0 2px 6px #0003}
+.coach-bubble b{color:#26301f;letter-spacing:-.2px}
+.coach-bubble p{color:#3d4636}
+.coach-actions button{border-radius:999px}
+.coach-actions .coach-back{box-shadow:0 1px 0 #0003}
+.coach-bubble.is-compact{border-radius:12px}/* 설명 말풍선 가독성·등장 애니메이션 */
+.coach-bubble{padding:14px 16px 12px;font-size:14.5px;line-height:1.6;opacity:0;transform:translateY(6px);transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
+.coach-bubble.is-ready{opacity:1;transform:none}
+.coach-bubble b{font-size:16px;line-height:1.3;margin-bottom:6px}
+.coach-bubble p{margin:0 0 12px;color:#2f3829;word-break:keep-all}
+.coach-actions button{font-size:13.5px;padding:9px 14px}
+.coach-bubble.is-compact{padding:10px 14px;font-size:13.5px;line-height:1.5}
+.coach-bubble.is-compact b{font-size:14.5px}
+.coach-bubble.is-compact .coach-actions button{font-size:12.5px;padding:7px 12px}
+.coach.is-leaving .coach-bubble{opacity:0;transform:translateY(6px)}
+@media(prefers-reduced-motion:reduce){.coach-bubble{transition:none;transform:none}}/* 설명창 통일: 한 가지 크기(폭 340px), 넉넉한 여백과 읽기 쉬운 글자 */
+.coach-bubble,.coach-bubble.is-compact{display:block;padding:18px 20px 16px;font-size:14.5px;line-height:1.7;border-radius:16px}
+.coach-bubble b,.coach-bubble.is-compact b{display:block;margin:0 0 8px;font-size:16.5px;line-height:1.3;font-weight:800}
+.coach-bubble p,.coach-bubble.is-compact p{margin:0 0 16px;color:#2f3829;word-break:keep-all}
+.coach-actions,.coach-bubble.is-compact .coach-actions{display:flex;justify-content:flex-end;gap:8px;margin:0}
+.coach-actions button,.coach-bubble.is-compact .coach-actions button{font-size:13.5px;padding:9px 16px}

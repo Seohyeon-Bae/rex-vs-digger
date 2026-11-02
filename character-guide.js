@@ -54,13 +54,13 @@ export class CharacterRenderer extends GPURenderer{
    {const x=-5,z=-24,h=16;for(const dx of [-.8,.8])for(const dz of [-.8,.8])B(x+dx,0,z+dz,.16,h,.16,'#aa8b48');for(let y=1;y<h;y+=3)for(const s of [-1,1])B(x,y,z+s*.8,1.8,.11,.1,'#c4a258');B(x+4,h,z,24,.65,1.5,'#b6954e');B(x-6,h-.3,z,3.8,2.2,2.1,'#7f8172');B(x+1,h+.1,z-.9,1.9,1.6,1.5,'#536c66');B(x+12,h-9,z,.045,9,.045,'#4c574e');B(x+12,h-9.5,z,.5,.65,.4,'#796b40');}
   }}
  draw(time){
-  if(!this.unit||this.width<1||this.height<1)return;if(!this.portrait)animateCharacterPreview(this,time);const c=this.ctx;this.scale=Math.min(this.width/15,this.height/9)*this.zoom;this.detail=1;this.compact=false;this.drawUnits=[this.unit];this.motionTips=[];this.buffFXCount=0;this.buffFXTeams={rex:0,dig:0};this.polys=[];
+  if(!this.unit||this.width<1||this.height<1)return;if(!this.portrait)animateCharacterPreview(this,time);const c=this.ctx;this.scale=Math.min(this.width/15,this.height/9)*this.zoom;this.detail=1;this.compact=false;this.drawUnits=[this.unit,...(this.extraUnits||[])];this.motionTips=[];this.buffFXCount=0;this.buffFXTeams={rex:0,dig:0};this.polys=[];
   c.clearRect(0,0,this.width,this.height);
   if(this.gl&&!this.gpuLost){const gl=this.gl;this.currentMap=this.batchMap;for(const b of this.batchMap.values())b.count=0;this.stats.drawCalls=this.stats.instances=0;gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);this.shakeX=this.shakeY=0;this.setupCamera(time);}
   else c.clearRect(0,0,this.width,this.height);
   if(this.portrait){if(this.gl&&!this.gpuLost){this.gl.clearColor(0,0,0,0);this.gl.clear(this.gl.COLOR_BUFFER_BIT|this.gl.DEPTH_BUFFER_BIT);}else{c.clearRect(0,0,this.width,this.height);}}
-  if(!this.portrait)this.guideStage(this.unit.team==='rex');this.unit.team==='rex'?this.rex(this.unit,time,this.unit.hp<=0):this.digger(this.unit,time,this.unit.hp<=0);
-  if(this.gl&&!this.gpuLost){this.gpuRiders(time);this.drawMap(this.batchMap);}else this.flush();
+  if(!this.portrait)this.guideStage(this.unit.team==='rex');for(const u of this.drawUnits)u.team==='rex'?this.rex(u,time,u.hp<=0):this.digger(u,time,u.hp<=0);
+  if(this.gl&&!this.gpuLost){this.gpuRiders(time);if(this.extraUnits)this.gpuWreckSmoke(time);this.drawMap(this.batchMap);}else this.flush();
  }
 }
 export function installCharacterGuide({getConfig,onOpen}){

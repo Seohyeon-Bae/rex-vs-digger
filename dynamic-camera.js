@@ -2,23 +2,33 @@ import {BUFFS} from './buffs.js';
 import {fieldView,projectField} from './field-camera.js';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angle=v=>Math.atan2(Math.sin(v),Math.cos(v));
+// Living combatants: crowd is 0 up to 10 left and 1 from 40 left; mass keeps growing to 1 near 320 left.
+// Many simultaneous fights need calmer, longer, nearer shots; as a battle thins out the camera
+// regains its small-battle liveliness.
+const crowdCache=new WeakMap();
+const crowdState=b=>{let c=crowdCache.get(b);if(c&&c.tick===b.tick)return c;let alive=0;for(const u of b.units)if(u.hp>0)alive++;c={tick:b.tick,crowd:clamp((alive-10)/30,0,1),mass:clamp(Math.log2(Math.max(1,alive)/40)/3,0,1)};crowdCache.set(b,c);return c;};
+const crowdOf=b=>crowdState(b).crowd,massOf=b=>crowdState(b).mass;
+// Shots glide from the current view toward the fight; crowded battles move slower and never jump.
+function glide(shot,now,crowd,mass){const dt=clamp((now-(shot.glideAt??now))/1000,0,.05);shot.glideAt=now;const k=1-Math.exp(-dt*(5-crowd*2-mass*1.2));let dx=(shot.x-shot.viewX)*k,dz=(shot.z-shot.viewZ)*k;const d=Math.hypot(dx,dz),max=(36-crowd*14-mass*8)*dt;if(d>max){dx*=max/d;dz*=max/d;}shot.viewX+=dx;shot.viewZ+=dz;}
 // Only live combatants may anchor automatic shots. Sampling bounds large-battle work.
 export function updateDynamicDirector(r){
- const b=r.battle,t=b.time,now=performance.now();
+ const b=r.battle,t=b.time,now=performance.now(),crowd=crowdOf(b),mass=massOf(b);
  const visible=u=>u&&(u.hp>0||u.directorLaunch&&t-u.directorLaunch.time<.9&&u.y>.2);
  if(r.directorBattle!==b){r.directorBattle=b;r.directorShot=null;r.directorScanAt=0;r.directorNextAt=0;r.directorHome=null;r.directorZoomState=null;r.directorLaunchSeen=null;}
  if(b.done){r.directorShot=null;return null;}
  let active=r.directorShot;
  if(active?.kind==='launch'){
   const victim=b.units[active.ids[1]],ended=!victim||t-victim.directorLaunch?.time>1.8||(victim.y<.25&&victim.vy<=0)||Math.hypot(victim.vx,victim.vz)<3;
-  if(ended){r.directorShot=null;active=null;r.directorNextAt=0;r.directorScanAt=0;}
+  // Hold each launch shot instead of chaining cuts; crowded battles launch someone every moment.
+  if(ended&&(!victim||now-active.realStarted>=1000+crowd*3000+mass*2000)){r.directorShot=null;active=null;r.directorNextAt=0;r.directorScanAt=0;}
  }
 
- if(active){const units=active.ids.map(id=>b.units[id]).filter(visible);if(units.length<2){r.directorShot=null;active=null;r.directorNextAt=t+.25;}else if(t<active.until||now<active.realUntil){active.x=units.reduce((s,u)=>s+u.x,0)/units.length;active.z=units.reduce((s,u)=>s+u.z,0)/units.length;}else{r.directorShot=null;active=null;r.directorNextAt=t+1.2;}}
+ if(active){const units=active.ids.map(id=>b.units[id]).filter(visible);if(units.length<2){r.directorShot=null;active=null;r.directorNextAt=t+.25;}else if(t<active.until||now<active.realUntil){const x=units.reduce((s,u)=>s+u.x,0)/units.length,z=units.reduce((s,u)=>s+u.z,0)/units.length;active.x=x;active.z=z;glide(active,now,crowd,mass);}else{r.directorShot=null;active=null;r.directorNextAt=t+1.8+crowd*1.2+mass*1.5;}}
  if(t<(r.directorScanAt||0))return active;
  r.directorScanAt=t+.22;
  let best=null,bestScore=0;
- const consider=(u,v,score,kind,extra=null)=>{if(!u||!v||u.hp<=0||!visible(v)||u.team===v.team||Math.hypot(u.x-v.x,u.z-v.z)>30)return;if(score>bestScore){bestScore=score;best={u,v,score,kind,extra};}};
+ // In crowded battles a distant fight must be clearly better than one near the current view.
+ const consider=(u,v,score,kind,extra=null)=>{if(!u||!v||u.hp<=0||!visible(v)||u.team===v.team||Math.hypot(u.x-v.x,u.z-v.z)>30)return;if(crowd)score-=crowd*Math.min(6+mass*3,Math.hypot((u.x+v.x)/2-r.focusX,(u.z+v.z)/2-r.focusZ)/8);if(score>bestScore){bestScore=score;best={u,v,score,kind,extra};}};
  // Rare events are not skipped by the ordinary large-battle sampling stride.
  const cinematic=[];if(b.directorCandidates)for(const [id,until] of b.directorCandidates){if(until<t)b.directorCandidates.delete(id);else cinematic.push(b.units[id]);}
  for(const u of cinematic){
@@ -37,12 +47,12 @@ export function updateDynamicDirector(r){
   let score=a.kind==='pounce'?8:a.kind==='spin'?7:a.kind==='tail'?5:3;if(a.evasion)score-=2;if(u.buffActive)score++;if(u.parry>0||v?.parry>0)score+=2;
   if(v&&Math.min(u.hp/u.maxHp,v.hp/v.maxHp)<.25)score+=2;if(r.directorLastActor===u.id)score-=2.5;consider(u,v,score,a.kind);
  }
- if(active&&(!best||best.score<active.score+3||now-active.realStarted<2200))return active;
+ if(active&&(!best||best.score<active.score+3+crowd*3+mass*3||now-active.realStarted<3000+crowd*2000+mass*2500))return active;
  if(!best||!active&&best.score<10&&t<(r.directorNextAt||0))return active;
  const {u,v,kind,extra}=best,units=[u,v];if(extra?.hp>0&&extra.id!==v.id&&extra.id!==u.id&&Math.hypot(extra.x-v.x,extra.z-v.z)<22)units.push(extra);
  if(kind==='launch')r.directorLaunchSeen=v.id+':'+v.directorLaunch.time;
  const xs=units.map(u=>u.x),zs=units.map(u=>u.z),span=Math.hypot(Math.max(...xs)-Math.min(...xs),Math.max(...zs)-Math.min(...zs));r.directorLastActor=u.id;
- r.directorShot={ids:units.map(u=>u.id),kind,score:best.score,x:xs.reduce((a,b)=>a+b,0)/units.length,z:zs.reduce((a,b)=>a+b,0)/units.length,started:t,until:t+(kind==='throw'||kind==='launch'||kind==='combo'?4.5:3.2),realStarted:now,realUntil:now+(best.score>=10?2400:1400),yaw:Math.atan2(v.z-u.z,v.x-u.x)+Math.PI/2,side:(u.id+v.id)%2?1:-1,zoomFactor:clamp(1.55-span*.025,1.05,1.5),elev:kind==='pounce'?.72:kind==='spin'||kind==='throw'||kind==='launch'?.66:.48};
+ r.directorShot={ids:units.map(u=>u.id),kind,score:best.score,x:xs.reduce((a,b)=>a+b,0)/units.length,z:zs.reduce((a,b)=>a+b,0)/units.length,viewX:Number.isFinite(r.focusX)?r.focusX:xs.reduce((a,b)=>a+b,0)/units.length,viewZ:Number.isFinite(r.focusZ)?r.focusZ:zs.reduce((a,b)=>a+b,0)/units.length,started:t,until:t+(kind==='throw'||kind==='launch'||kind==='combo'?4.5:3.2),realStarted:now,realUntil:now+(best.score>=10?2400:1400)+crowd*2000+mass*1500,yaw:Math.atan2(v.z-u.z,v.x-u.x)+Math.PI/2,side:(u.id+v.id)%2?1:-1,zoomFactor:clamp(1.55-span*.025,1.05,1.5-crowd*.25-mass*.1),elev:kind==='pounce'?.72:kind==='spin'||kind==='throw'||kind==='launch'?.66:.48};
  return r.directorShot;
 }
 export function applyDynamicMotion(r,shot){
@@ -51,8 +61,10 @@ export function applyDynamicMotion(r,shot){
  const home=r.directorHome;if(!home)return;
  const phase=shot?clamp((r.battle.time-shot.started)/(shot.until-shot.started),0,1):0;
  // A short orbit reveals the contact angle; no sudden cuts or full rotations.
- const goal=shot?home.yaw+clamp(angle(shot.yaw-home.yaw),-.65,.65)+shot.side*(phase-.5)*.28:home.yaw;
- const elevation=shot?shot.elev:home.elev,ease=1-Math.exp(-dt*(shot?3.8:4.5));
+ // Crowded battles keep the viewer's orientation: smaller, slower turns and height changes.
+ const crowd=crowdOf(r.battle),mass=massOf(r.battle),turn=.65-crowd*.42-mass*.1;
+ const goal=shot?home.yaw+clamp(angle(shot.yaw-home.yaw),-turn,turn)+shot.side*(phase-.5)*.28*(1-crowd*.7-mass*.2):home.yaw;
+ const elevation=shot?home.elev+(shot.elev-home.elev)*(1-crowd*.6-mass*.25):home.elev,ease=1-Math.exp(-dt*(shot?3.8-crowd*1.8-mass*.8:4.5-crowd*2-mass));
  r.yaw+=angle(goal-r.yaw)*ease;r.elev+=(elevation-r.elev)*ease;
  if(!shot&&Math.abs(angle(home.yaw-r.yaw))<.002&&Math.abs(home.elev-r.elev)<.002)r.directorHome=null;
 }
@@ -98,6 +110,7 @@ export function updateDynamicView(r,now=performance.now()){
  if(!r.director||!r.follow||r.followId!==null||r.selectedId!=null||r.battle.done||!r.battle.tick)return;
  let state=r.directorViewState;
  if(!state||state.battle!==r.battle)state=r.directorViewState={battle:r.battle,changed:now,lastTime:r.battle.time,lastClose:now};
+ if(state.pending&&now>=state.pending.at){const p=state.pending;state.pending=null;switchView(r,state,p,now);}
  if(state.lastTime===r.battle.time)return;state.lastTime=r.battle.time;
  if(now<(r.directorManualUntil||0))return;
  const shot=updateDynamicDirector(r),units=shot?.ids.map(id=>r.battle.units[id]);
@@ -111,17 +124,25 @@ export function updateDynamicView(r,now=performance.now()){
  if(tooClose)state.unsafeSince??=now;else state.unsafeSince=null;
  let next=null,nextSide=bestSide;
  if(r.cameraMode==='field'){
-  if(age>=3000&&state.unsafeSince!=null&&now-state.unsafeSince>1200){
+  if(age>=4500&&state.unsafeSince!=null&&now-state.unsafeSince>1500){
    const other=(r.fieldSide||1)===1?2:1;
    if(comfortableField(r,units,other)!==null){next='field';nextSide=other;}else next='overview';
-  }else if(age>=10000&&now-state.lastClose>4000)next='overview';
- }else if(age>=7000&&close&&bestSide!==null)next='field';
- if(!next)return;
+  }else if(age>=12000&&now-state.lastClose>4000)next='overview';
+ // Crowded battles (about 28+ alive) stay on the overview: a cut to the close camera is the harshest change.
+ }else if(crowdOf(r.battle)<.6&&age>=9000+crowdOf(r.battle)*8000&&close&&bestSide!==null)next='field';
+ if(!next||state.pending)return;
+ // Dissolve through a short dip instead of a hard cut; the view changes at the darkest moment.
+ const live=units?.filter(u=>u?.hp>0)||[];
+ state.pending={next,side:nextSide,x:live.length?live.reduce((s,u)=>s+u.x,0)/live.length:shot?.x,z:live.length?live.reduce((s,u)=>s+u.z,0)/live.length:shot?.z,at:now+230};
+ r.canvas?.animate?.([{opacity:1},{opacity:.15,offset:.45},{opacity:.15,offset:.55},{opacity:1}],{duration:520,easing:'ease-in-out'});
+}
+function switchView(r,state,{next,side,x,z},now){
+ if(!r.director||r.battle.done)return;
  r.directorHome=null;r.directorFrameAt=now;r.directorZoomState=null;
  if(next==='field'){
   if(r.cameraMode==='field')r.selectFieldCamera();
-  else{r.fieldSide=nextSide;r.setCameraMode('field');}
-  r.zoom=1.25;r.focusX=shot.x;r.focusZ=shot.z;r.fieldProjection=null;
+  else{r.fieldSide=side;r.setCameraMode('field');}
+  r.zoom=1.25;if(Number.isFinite(x)){r.focusX=x;r.focusZ=z;}r.fieldProjection=null;
  }else r.setCameraMode(next);
  state.changed=now;state.unsafeSince=null;
 }

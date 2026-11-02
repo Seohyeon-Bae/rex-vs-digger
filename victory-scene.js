@@ -9,7 +9,7 @@ export function animateVictoryUnit(u,time){
  if(rex){
   const floor=smooth((cycle-.6)/.65)*(1-smooth((cycle-3.4)/.65)),turn=smooth((cycle-.8)/2.65),freeze=smooth((cycle-4.1)/.5)*(1-smooth((cycle-5.5)/.65));
   // Low windmill-style turns, followed by a held leaning freeze and a proud recovery.
-  u.y=.6*floor+.35*freeze;u.roll=1.15*floor-.55*freeze;u.pitch=.2*Math.sin(time*5)*floor-.22*freeze;
+  u.y=-.95*floor+.2*freeze;u.roll=1.52*floor-.55*freeze;u.pitch=.2*Math.sin(time*5)*floor-.22*freeze;
   u.yaw=Math.PI*4*turn;u.speed=1.6*floor;u.moving=floor>.05;u.walk=time*11;
   u.buffCastJaw=.25*floor+.85*smooth((cycle-6)/.3)*(1-smooth((cycle-7)/.4));
  }else{
@@ -38,3 +38,4 @@ export function createVictoryScene(host){
   renderer.show(team,config);renderer.yaw=-.4;renderer.elev=.24;renderer.zoom=.92;renderer.resize();epoch=performance.now();shown=true;resume();
  },hide(){shown=false;stop();}};
 }
+

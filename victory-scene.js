@@ -1,13 +1,26 @@
 import {CharacterRenderer} from './character-guide.js';
 import {Battle} from './engine.js';
-import {updateBucketArm} from './weapon-geometry.js';
 
 export function animateVictoryUnit(u,time){
- const beat=Math.sin(time*3.4),rex=u.team==='rex';
- Object.assign(u,{x:0,z:0,y:rex?.08+.2*Math.max(0,beat):0,yaw:Math.sin(time*1.5)*(rex?.13:.07),pitch:rex?-.07-.04*Math.sin(time*2):.018*beat,roll:rex?0:.025*Math.sin(time*2),hit:0,stun:0,parry:0,guardUntil:0,buffActive:false,speed:rex?1.2:0,moving:rex,walk:time*5});
- const a=u.victoryAction??={kind:rex?'bite':'uppercut',duration:1,impact:.48,peakImpact:.48,side:1,yaw:0,pulses:[],target:1,resolved:false,bucketReach:4.5};
- a.age=rex?.32+.24*(.5+.5*Math.sin(time*2.4)):.35+.25*(.5+.5*Math.sin(time*2));u.action=a;u.attack=Math.sin(a.age*Math.PI);
- if(!rex){updateBucketArm(u,1/30);u.armPose.prevSlew=u.armPose.slew;u.armPose.slew=.28*Math.sin(time*1.6);u.armPose.vs=.448*Math.cos(time*1.6);}
+ time*=1.3;
+ const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);},cycle=time%7.5,rex=u.team==='rex';
+ Object.assign(u,{x:0,z:0,y:0,yaw:0,pitch:0,roll:0,hit:0,stun:0,parry:0,guardUntil:0,buffActive:false,speed:0,moving:false,walk:time*5});
+ const a=u.victoryAction??={kind:'victory',duration:1,impact:.48,peakImpact:.48,side:1,yaw:0,pulses:[],target:1,resolved:false};a.kind='victory';a.age=0;u.action=a;u.attack=0;
+ if(rex){
+  const floor=smooth((cycle-.6)/.65)*(1-smooth((cycle-3.4)/.65)),turn=smooth((cycle-.8)/2.65),freeze=smooth((cycle-4.1)/.5)*(1-smooth((cycle-5.5)/.65));
+  // Low windmill-style turns, followed by a held leaning freeze and a proud recovery.
+  u.y=.6*floor+.35*freeze;u.roll=1.15*floor-.55*freeze;u.pitch=.2*Math.sin(time*5)*floor-.22*freeze;
+  u.yaw=Math.PI*4*turn;u.speed=1.6*floor;u.moving=floor>.05;u.walk=time*11;
+  u.buffCastJaw=.25*floor+.85*smooth((cycle-6)/.3)*(1-smooth((cycle-7)/.4));
+ }else{
+  const brace=smooth((cycle-.5)/.7),lift=smooth((cycle-1.2)/1.1)*(1-smooth((cycle-4.8)/1.25));
+  u.buffCastJaw=0;u.y=1.65*lift;u.yaw=Math.PI*2*smooth((cycle-2.2)/2.4);
+  // Bucket's lower edge stays on the ground as fixed-length joints lift the chassis.
+  const idleX=5.6*1.08,idleY=2.2;
+  u.armPose={x:idleX+(4.4-idleX)*brace,y:idleY+(1-u.y-idleY)*brace,slew:-u.yaw,vx:0,vy:0,vs:0};
+  if(cycle>6.2){const release=smooth((cycle-6.2)/1.1);u.armPose.x=4.4+(idleX-4.4)*release;u.armPose.y=1+(idleY-1)*release;}
+  u.armPose.prevX=u.armPose.x;u.armPose.prevY=u.armPose.y;u.armPose.prevSlew=u.armPose.slew;
+ }
 }
 
 export function createVictoryScene(host){

@@ -47,3 +47,19 @@ html body #battlefield .tracked-skill-details .kw::after{top:calc(100% + 6px);bo
  #battlefield .tracked-skill-details .skill-facts{gap:4px}
  #battlefield .tracked-skill-details .skill-facts>div{padding:4px 7px}
 }
+/* PC 추적 패널: 스킬이 7개(오버드라이브/광폭화 추가)라 8px 간격이면 마지막 패링 아이콘이 패널 밖으로 삐져나온다. */
+@media(min-width:761px) and (pointer:fine){html body #battlefield #trackedUnit .tracked-skills{gap:3px}}
+/* 전투 기록: 글자를 12px로 키운 뒤에도 칸 높이가 45px로 남아 줄마다 11px로 눌려 아래가 잘렸다. 칸 높이는 내용에 맞춘다. */
+html body .event-feed{height:auto;gap:2px}html body .event-feed p{flex:none;line-height:18px}
+/* 카메라 버튼 글자 구분: 모바일 36~40px 버튼에서 AUTO/DYNAMIC 5.5px, 아이콘과 ON·배율 글자가 0~1px로 붙어 읽기 어려웠다. 글자는 키우고 아이콘은 줄여 위·가운데·아래 칸을 나눈다. */
+@media(max-width:760px),(pointer:coarse){
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button:is(#autoFollow,#directorBtn)::before{font-size:6.5px!important;line-height:7px!important;top:3px!important;bottom:auto!important;font-weight:800!important;letter-spacing:-.1px!important}
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button:is(#autoFollow,#directorBtn) svg{width:10px!important;height:10px!important;position:absolute!important;left:50%!important;top:calc(50% - 1px)!important;transform:translate(-50%,-50%)!important;margin:0!important}
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button:is(#autoFollow,#directorBtn) :is(.auto-state,.director-state){font-size:7.5px!important;line-height:8px!important;top:auto!important;bottom:3px!important}
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button:is(#autoFollow,#directorBtn)::after{background-size:5px 1.5px,1.5px 5px,5px 1.5px,1.5px 5px,5px 1.5px,1.5px 5px,5px 1.5px,1.5px 5px!important}
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button#directorBtn::before{font-size:6px!important;letter-spacing:-.25px!important;left:1px!important;right:1px!important}
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button#viewHome svg{width:14px!important;height:14px!important;position:absolute!important;left:50%!important;top:calc(50% - 11px)!important;transform:translateX(-50%)!important;margin:0!important}
+html body :is(#battlefield:is(:fullscreen,.expanded,.battlefield) .mobile-dock-row,.arena-panel>.playback) .camera-controls>button#viewHome .camera-zoom{position:absolute!important;left:0!important;right:0!important;top:auto!important;bottom:3px!important;line-height:8px!important;font-size:8px!important}
+}
+/* PC 일반 화면 조작바: 24px 아이콘이 AUTO/ON 글자와 붙어 보여 18px로 줄이고 가운데에 둔다. */
+@media(min-width:761px) and (pointer:fine){html body .arena-panel>.playback .camera-controls>button:is(#autoFollow,#directorBtn) svg{width:18px!important;height:18px!important;position:absolute!important;left:50%!important;top:50%!important;transform:translate(-50%,-50%)!important;margin:0!important}}

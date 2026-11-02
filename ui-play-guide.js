@@ -49,7 +49,7 @@ const click=s=>()=>tap(s);
 
 // Every example: what to light up, whether it runs on the demo battle, and its steps (target, input, action).
 const DEMOS={
- count:{spot:['#matchSetup','.setup-summary'],arena:true,icon:'[data-preset="20,20"]',steps:[{at:'[data-preset="20,20"]',input:'click',act:click('[data-preset="20,20"]')},{at:'#randomSetup',input:'click',act:click('#randomSetup')}]},
+ count:{spot:['#matchSetup','.setup-summary'],follow:true,arena:true,icon:'[data-preset="20,20"]',steps:[{at:()=>document.querySelector('#matchSetup.is-collapsed .setup-summary')||document.querySelector('[data-preset="20,20"]'),input:'click',act:()=>{if(document.querySelector('#matchSetup.is-collapsed'))tap('.setup-summary');}},{at:'[data-preset="20,20"]',input:'click',act:click('[data-preset="20,20"]')},{at:'#randomSetup',input:'click',act:click('#randomSetup')}]},
  settings:{spot:['#settingsBtn','#matchSettingsBtn'],window:true,icon:'#settingsBtn',release:closeOtherDialogs,steps:[{at:'#settingsBtn',input:'click',act:click('#settingsBtn')}]},
  // The intro window itself is used: open it, switch its tabs, rotate and zoom the model, then reset the view.
  info:{spot:['#characterDialog','.character-info-button[data-character-info="rex"]'],window:true,release:closeOtherDialogs,steps:[
@@ -112,6 +112,7 @@ function setView(v){const r=game();if(!r)return;closeOtherDialogs();
  $('battlefield')?.classList.toggle('expanded',!!v.expanded);}
 async function beginStage(demo){
  const saved=capture(),own=saved.state&&!['ready','ended'].includes(saved.state);
+ saved.setupCollapsed=$('matchSetup')?.classList.contains('is-collapsed');
  // A battle the player is in the middle of is never replaced; the example then uses it as it is.
  if(own||!demo.stage)return{saved,staged:false};
  if(saved.state==='ended')tap('#stopBtn');
@@ -128,7 +129,7 @@ async function loopStage(demo,stage){
  }else{closeOtherDialogs();if(demo===DEMOS.count)setCounts(stage.saved.rex,stage.saved.dig);if(demo===DEMOS.sound&&$('soundBtn')?.getAttribute('aria-pressed')!==stage.saved.sound)tap('#soundBtn');}
  demo.before?.(game());
 }
-function endStage(stage){const s=stage.saved;if(stage.staged&&state()!=='ready')tap('#stopBtn');closeOtherDialogs();setCounts(s.rex,s.dig);setView(s);}
+function endStage(stage){const s=stage.saved;if(stage.staged&&state()!=='ready')tap('#stopBtn');closeOtherDialogs();setCounts(s.rex,s.dig);setView(s);if(s.setupCollapsed!==undefined&&$('matchSetup')?.classList.contains('is-collapsed')!==s.setupCollapsed)tap('.setup-summary');}
 
 // --- Pointer and input indicator ---
 const mouse=part=>plain('<rect x="6" y="2.5" width="12" height="19" rx="6"/><path d="M12 2.5v7.5M6 10h12"/>'+(part==='left'?'<path d="M12 2.5a6 6 0 0 0-6 6V10h6Z" fill="currentColor" stroke="none"/>':'<rect x="10.8" y="4.6" width="2.4" height="4.2" rx="1.2" fill="currentColor" stroke="none"/>'));
@@ -181,8 +182,9 @@ async function startTour(button){
  // Scroll once per step, not every animation frame, so the spotlight can settle smoothly.
  const reveal=target=>{if(tour!==me)return;const focus=target instanceof Element&&shown(target)?target:first(demo.spot)||first(ARENA);if(!focus)return;
   const area=demo.follow?focus:first(demo.spot)||focus,r=area.getBoundingClientRect(),view=window.visualViewport,h=view?.height||innerHeight,top=view?.offsetTop||0;
-  const el=r.height>h-24?focus:area,q=el.getBoundingClientRect();
-  if(q.top<top+12||q.bottom>top+h-12||q.left<0||q.right>innerWidth)el.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});};
+  const el=r.height>h-24?focus:area,q=el.getBoundingClientRect(),room=(me.root?.querySelector('.coach-bubble')?.offsetHeight||220)+36;
+  if(q.height<h-room&&q.bottom+room>top+h&&q.top>top+12)window.scrollBy({top:q.top-top-18,behavior:reduced.matches?'auto':'smooth'});
+  else if(q.top<top+12||q.bottom>top+h-12||q.left<0||q.right>innerWidth)el.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});};
  const place=()=>{if(tour!==me)return;
   const base=demo.follow&&me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl:first(demo.spot)||first(ARENA);if(!base){me.raf=requestAnimationFrame(place);return;}
   const s=base.getBoundingClientRect(),a=demo.arena?first(ARENA)?.getBoundingClientRect():null,pad=6;
@@ -192,13 +194,15 @@ async function startTour(button){
   // Leave enough room for the explanation; on phones highlight the control rather than a tall combined area.
   const margin=10,gap=12; bubble.style.width=Math.min(340,innerWidth-margin*2)+'px';
   const bubbleHeight=bubble.offsetHeight,maxArea=Math.max(50,innerHeight-bubbleHeight-gap-margin*2);
-  if(r.bottom-r.top>maxArea&&s.height<=maxArea)r={left:s.left,top:s.top,right:s.right,bottom:s.bottom};
-  if(r.bottom-r.top>maxArea){const focus=me.pointEl instanceof Element?me.pointEl.getBoundingClientRect():s,center=(focus.top+focus.bottom)/2;
-   const top=Math.max(margin,Math.min(innerHeight-margin-maxArea,center-maxArea/2));r={...r,top,bottom:top+maxArea};}
+  const q=me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl.getBoundingClientRect():s;
+  const required={left:Math.min(s.left,q.left),top:Math.min(s.top,q.top),right:Math.max(s.right,q.right),bottom:Math.max(s.bottom,q.bottom)};
+  if(r.bottom-r.top>maxArea)r=required;
+  else r={left:Math.min(r.left,required.left),top:Math.min(r.top,required.top),right:Math.max(r.right,required.right),bottom:Math.max(r.bottom,required.bottom)};
   // The lit frame and the dark panels move together on a critically damped spring: a soft start, no overshoot.
   const goal=[r.left-pad,r.top-pad,r.right+pad,r.bottom+pad],now=performance.now(),dt=Math.min(.05,(now-(me.at??now))/1000),w=8.5;me.at=now;
   if(!me.rect||reduced.matches){me.rect=goal.slice();me.vel=[0,0,0,0];}else for(let i=0;i<4;i++){me.vel[i]+=(w*w*(goal[i]-me.rect[i])-2*w*me.vel[i])*dt;me.rect[i]+=me.vel[i]*dt;}
-  const [L,T,R,B]=me.rect;Object.assign(spotEl.style,{left:L+'px',top:T+'px',width:R-L+'px',height:B-T+'px'});
+  // While the border eases to its next position, expand its bounds to keep the actual target inside at every frame.
+  const [L,T,R,B]=[Math.min(me.rect[0],goal[0]),Math.min(me.rect[1],goal[1]),Math.max(me.rect[2],goal[2]),Math.max(me.rect[3],goal[3])];Object.assign(spotEl.style,{left:L+'px',top:T+'px',width:R-L+'px',height:B-T+'px'});
   [[0,0,innerWidth,Math.max(0,T)],[0,B,innerWidth,Math.max(0,innerHeight-B)],[0,T,Math.max(0,L),B-T],[R,T,Math.max(0,innerWidth-R),B-T]].forEach(([x,y,w,h],i)=>Object.assign(dims[i].style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'}));
   let px=null,py=null;const cv=first(ARENA)?.getBoundingClientRect();
   if(me.pointEl==='unit'){const p=unitPoint(),c=game()?.canvas.getBoundingClientRect();if(p&&c){px=c.left+p.x;py=c.top+p.y;}}
@@ -206,14 +210,16 @@ async function startTour(button){
   else if(me.pointEl instanceof Element){const q=me.pointEl.getBoundingClientRect();px=q.left+q.width/2;py=q.top+q.height/2;}
   if(px!=null)Object.assign(anchor.style,{left:px+'px',top:py+'px'});
   // Follow directly below the yellow frame, switching above when the bottom has no room.
-  // If neither band fits, shorten only the visible spotlight, never place text inside it.
+  // Never crop or move the spotlight away from its target to make room for text.
   const rect=spotEl.getBoundingClientRect(),W=bubble.offsetWidth,H=bubble.offsetHeight,m=10,gapY=12;
   let top=rect.bottom+gapY;
-  if(top+H>innerHeight-m){if(rect.top-gapY-H>=m)top=rect.top-gapY-H;
-   else{const bottom=Math.max(m+30,innerHeight-H-gapY-m),newTop=Math.max(m,Math.min(rect.top,bottom-30));
-    Object.assign(spotEl.style,{top:newTop+'px',height:bottom-newTop+'px'});top=bottom+gapY;
-    [[0,0,innerWidth,newTop],[0,bottom,innerWidth,innerHeight-bottom],[0,newTop,Math.max(0,L),bottom-newTop],[R,newTop,Math.max(0,innerWidth-R),bottom-newTop]].forEach(([x,y,w,h],i)=>Object.assign(dims[i].style,{left:x+'px',top:y+'px',width:w+'px',height:h+'px'}));}}
-  Object.assign(bubble.style,{left:Math.max(m,Math.min(innerWidth-W-m,(L+R-W)/2))+'px',top:Math.max(m,top)+'px'});
+  let left=Math.max(m,Math.min(innerWidth-W-m,(L+R-W)/2));
+  if(innerWidth>=900&&rect.right+gapY+W<=innerWidth-m){left=rect.right+gapY;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}
+  else if(innerWidth>=900&&rect.left-gapY-W>=m){left=rect.left-gapY-W;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}
+  else if(top+H>innerHeight-m){if(rect.top-gapY-H>=m)top=rect.top-gapY-H;
+   else if(rect.right+gapY+W<=innerWidth-m){left=rect.right+gapY;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}
+   else if(rect.left-gapY-W>=m){left=rect.left-gapY-W;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}}
+  Object.assign(bubble.style,{left:left+'px',top:top+'px'});
   bubble.classList.add('is-ready');
   me.raf=requestAnimationFrame(place);};
  // Examples that change the battle view are scrolled so the battlefield itself is centred.

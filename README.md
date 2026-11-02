@@ -3,7 +3,6 @@
 PC와 모바일에서 관전하는 3D 전투 시뮬레이터입니다.
 
 - [GitHub에서 게임 플레이](https://seohyeon-bae.github.io/rex-vs-digger/)
-- [공개 사이트에서 플레이](https://rex-vs-digger.bhj060300.chatgpt.site/)
 
 버전: 1.9.2
 

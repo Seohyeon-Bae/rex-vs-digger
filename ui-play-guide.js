@@ -238,6 +238,6 @@ async function startTour(button){
 dialog?.addEventListener('click',e=>{const b=e.target.closest('.guide-tiles button');if(b&&DEMOS[b.dataset.demo])startTour(b);});
 if(dialog)new MutationObserver(()=>{if(dialog.open){if(state()!=='ready')tap('#stopBtn');copyLiveControls();}}).observe(dialog,{attributes:true,attributeFilter:['open']});
 
-// The one launcher: always visible in the corner of the screen (the header ? button is hidden, still used to open the dialog).
+// Both entry buttons share a layout row; neither can cover the other's hit area.
 {const fab=document.createElement('button');fab.type='button';fab.className='guide-fab';fab.setAttribute('aria-label','플레이 가이드');fab.innerHTML='<span aria-hidden="true">?</span><b>플레이 가이드</b>';
- fab.onclick=()=>$('helpBtn')?.click();document.body.append(fab);}
+ fab.onclick=()=>$('helpBtn')?.click();const history=$('historyBtn'),row=history?.parentElement;if(row){row.prepend(history);row.append(fab);}else document.body.append(fab);}

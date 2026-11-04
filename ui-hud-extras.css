@@ -202,4 +202,10 @@ html.coach-room dialog[open]:not(#helpDialog){top:0;bottom:auto;margin-block:16p
 .coach-anchor{transition:left .22s ease-out,top .22s ease-out}
 .coach-bubble{max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain}
 html body.guide-coaching .guide-fab,html body:has(dialog[open]) .guide-fab{display:none}
+/* Demonstrations leave room for the battlefield, its controls and the explanation together. */
+html.coach-arena #battlefield:not(.expanded):not(:fullscreen){height:clamp(200px,calc(100dvh - var(--coach-explanation-space,260px) - 170px),430px);min-height:200px}
+html.coach-arena #matchSetup{max-height:calc(100dvh - var(--coach-explanation-space,260px) - 64px);overflow:auto}
+html.coach-arena #battlefield.expanded{bottom:calc(var(--coach-explanation-space,260px) + 28px);height:auto;min-height:180px}
+html body .bottom-row .guide-fab{position:fixed;inset:auto 16px 16px auto;z-index:900}
+@media(max-width:600px){html body .bottom-row .guide-fab{right:12px;bottom:calc(12px + env(safe-area-inset-bottom))}}
 @media(prefers-reduced-motion:reduce){.coach-anchor{transition:none}}

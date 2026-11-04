@@ -121,11 +121,11 @@ async function beginStage(demo){
  const base={...capture(),follow:true,director:false,speed:1,showHealth:true,shake:true,expanded:false};setView(base);base.camera=game()?.captureCamera?.();
  return{saved,staged:true,base};
 }
-async function loopStage(demo,stage){
+async function loopStage(demo,stage,owner){
  if(stage.staged){
-  if(demo.stage!=='battle'){if(state()!=='ready')tap('#stopBtn');setCounts(DEMO_SIZE,DEMO_SIZE);await wait(260);}
+  if(demo.stage!=='battle'){if(state()!=='ready')tap('#stopBtn');setCounts(DEMO_SIZE,DEMO_SIZE);await wait(260);if(tour!==owner)return;}
   else if(state()==='ready')tap('#startBtn');else tap('#resetBtn');
-  await wait(120);setView(stage.base);
+  await wait(120);if(tour!==owner)return;setView(stage.base);
   if(demo===DEMOS.count&&stage.saved.setupCollapsed&&!$('matchSetup')?.classList.contains('is-collapsed'))tap('.setup-summary');
  }else{closeOtherDialogs();if(demo===DEMOS.count)setCounts(stage.saved.rex,stage.saved.dig);if(demo===DEMOS.sound&&$('soundBtn')?.getAttribute('aria-pressed')!==stage.saved.sound)tap('#soundBtn');}
  demo.before?.(game());
@@ -157,7 +157,9 @@ function animatePointer(cursor,ripples,input){
 
 // Leaving an example fades it out while the guide fades back in (or the screen simply returns), at any moment.
 function endTour(back){if(!tour)return;const t=tour;tour=null;t.timers.forEach(clearTimeout);cancelAnimationFrame(t.raf);removeEventListener('keydown',t.key,true);removeEventListener('resize',t.resize);
- document.documentElement.classList.remove('coach-room');document.documentElement.style.removeProperty('--coach-explanation-space');document.body.classList.remove('guide-coaching');t.root?.classList.add('is-leaving');setTimeout(()=>t.root?.remove(),reduced.matches?0:220);
+ t.root?.querySelectorAll('.coach-cursor,.coach-ripple').forEach(e=>e.getAnimations().forEach(a=>a.cancel()));
+ if(t.root?.matches(':popover-open'))t.root.hidePopover();
+ document.documentElement.classList.remove('coach-room','coach-arena');document.documentElement.style.removeProperty('--coach-explanation-space');document.body.classList.remove('guide-coaching');t.root?.classList.add('is-leaving');setTimeout(()=>t.root?.remove(),reduced.matches?0:220);
  if(t.stage)endStage(t.stage);
  if(back&&dialog){dialog.showModal();t.button.focus();t.button.classList.add('is-active');setTimeout(()=>t.button.classList.remove('is-active'),900);}}
 async function startTour(button){
@@ -167,6 +169,7 @@ async function startTour(button){
  const me={button,timers:[],started:performance.now(),bubbleSet:false,pointEl:null};tour=me;
  // While an example runs, windows it opens leave a strip free at the bottom so the bubble never covers them.
  document.documentElement.classList.add('coach-room');document.body.classList.add('guide-coaching');
+ document.documentElement.classList.toggle('coach-arena',!!demo.arena);
  me.stage=await beginStage(demo);if(tour!==me)return;
  const text=(coarse.matches?button.dataset.dm:button.dataset.dp)||button.dataset.d||'',title=button.querySelector('b')?.textContent||'';
  const root=document.createElement('div');root.className='coach';
@@ -178,20 +181,22 @@ async function startTour(button){
  me.key=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();endTour(true);}};addEventListener('keydown',me.key,true);
  me.resize=()=>{me.bubbleSet=false;};addEventListener('resize',me.resize);
  root.querySelector('.coach-back').onclick=()=>endTour(true);root.querySelector('.coach-close').onclick=()=>endTour(false);
+ for(const [selector,back]of [['.coach-back',true],['.coach-close',false]])root.querySelector(selector).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();endTour(back);});
  root.addEventListener('pointerdown',e=>{if(!e.target.closest('.coach-bubble')){e.preventDefault();endTour(true);}});
  const resolve=at=>at==='unit'||at==='center'?at:typeof at==='function'?at():document.querySelector(at);
  // Bring the highlighted area into the device's viewport as the demonstration moves.
  // Scroll once per step, not every animation frame, so the spotlight can settle smoothly.
  const reveal=target=>{if(tour!==me)return;const focus=target instanceof Element&&shown(target)?target:first(demo.spot)||first(ARENA);if(!focus)return;
   const area=demo.follow?focus:first(demo.spot)||focus,r=area.getBoundingClientRect(),view=window.visualViewport,h=view?.height||innerHeight,top=view?.offsetTop||0;
-  const el=r.height>h-24?focus:area,q=el.getBoundingClientRect(),room=(me.root?.querySelector('.coach-bubble')?.offsetHeight||220)+36;
+  const el=r.height>h-24?focus:area,room=(me.root?.querySelector('.coach-bubble')?.offsetHeight||220)+36;let q=el.getBoundingClientRect();
+  if(demo.arena){const a=$('battlefield')?.getBoundingClientRect();if(a)q={left:Math.min(q.left,a.left),top:Math.min(q.top,a.top),right:Math.max(q.right,a.right),bottom:Math.max(q.bottom,a.bottom),height:Math.max(q.bottom,a.bottom)-Math.min(q.top,a.top)};}
   if(q.height<h-room&&q.bottom+room>top+h&&q.top>top+12)window.scrollBy({top:q.top-top-18,behavior:reduced.matches?'auto':'smooth'});
   else if(q.top<top+12||q.bottom>top+h-12||q.left<0||q.right>innerWidth)el.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});};
  const place=()=>{if(tour!==me)return;
   const activeDialog=[...document.querySelectorAll('dialog[open]:not(#helpDialog)')].find(shown);
   if(activeDialog!==me.activeDialog){me.activeDialog=activeDialog;me.rect=null;me.bubbleSide=null;}
   const base=activeDialog||(demo.follow&&me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl:first(demo.spot)||first(ARENA));if(!base){me.raf=requestAnimationFrame(place);return;}
-  const s=base.getBoundingClientRect(),a=demo.arena?first(ARENA)?.getBoundingClientRect():null,pad=6;
+  const s=base.getBoundingClientRect(),a=demo.arena&&!activeDialog?$('battlefield')?.getBoundingClientRect():null,pad=6;
   // The battlefield joins the lit area only when both fit on screen together (fullscreen lights the whole view).
   const u=a&&{left:Math.min(s.left,a.left),top:Math.min(s.top,a.top),right:Math.max(s.right,a.right),bottom:Math.max(s.bottom,a.bottom)};
   let r=demo.full&&u?{left:Math.max(0,u.left),top:Math.max(0,u.top),right:Math.min(innerWidth,u.right),bottom:Math.min(innerHeight,u.bottom)}:u&&u.bottom-u.top<=innerHeight-24?u:{left:s.left,top:s.top,right:s.right,bottom:s.bottom};
@@ -201,7 +206,8 @@ async function startTour(button){
   document.documentElement.style.setProperty('--coach-explanation-space',bubbleHeight+40+'px');
   const q=me.pointEl instanceof Element&&shown(me.pointEl)&&(!activeDialog||activeDialog.contains(me.pointEl))?me.pointEl.getBoundingClientRect():s;
   const required={left:Math.min(s.left,q.left),top:Math.min(s.top,q.top),right:Math.max(s.right,q.right),bottom:Math.max(s.bottom,q.bottom)};
-  if(r.bottom-r.top>maxArea)r=required;
+  if(a)r={left:Math.min(required.left,a.left),top:Math.min(required.top,a.top),right:Math.max(required.right,a.right),bottom:Math.max(required.bottom,a.bottom)};
+  else if(r.bottom-r.top>maxArea)r=required;
   else r={left:Math.min(r.left,required.left),top:Math.min(r.top,required.top),right:Math.max(r.right,required.right),bottom:Math.max(r.bottom,required.bottom)};
   // The lit frame and the dark panels move together on a critically damped spring: a soft start, no overshoot.
   const goal=[r.left-pad,r.top-pad,r.right+pad,r.bottom+pad],now=performance.now(),dt=Math.min(.05,(now-(me.at??now))/1000),w=12;me.at=now;
@@ -225,7 +231,7 @@ async function startTour(button){
  // Examples that change the battle view are scrolled so the battlefield itself is centred.
  (demo.arena||demo.spot===ARENA?document.querySelector('.arena-panel'):first(demo.spot))?.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});
  // One loop: reset the stage, rest on the first target, then each step moves there, shows its input and acts.
- const loop=async()=>{if(tour!==me)return;await loopStage(demo,me.stage);if(tour!==me)return;
+ const loop=async()=>{if(tour!==me)return;await loopStage(demo,me.stage,me);if(tour!==me)return;
   me.pointEl=resolve(demo.steps[0].at);reveal(me.pointEl);showInput(badge,null);cursor.style.opacity='1';
   demo.steps.forEach((s,i)=>{const t0=STEP*(i+1);
    me.timers.push(setTimeout(()=>{if(tour!==me)return;me.pointEl=resolve(s.at);reveal(me.pointEl);showInput(badge,s.input);animatePointer(cursor,ripples,s.input);},t0-STEP*.45));

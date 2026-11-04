@@ -47,11 +47,15 @@ const wheelOn=(selector,dir,ms)=>{const el=document.querySelector(selector);if(!
  return ease(ms,k=>{while(n<Math.floor(k*4)){n++;el.dispatchEvent(new WheelEvent('wheel',{bubbles:true,cancelable:true,deltaY:dir*120,clientX:r.left+r.width/2,clientY:r.top+r.height/2}));}});};
 const clickUnit=()=>{const r=game(),p=unitPoint();if(r&&p)r.selectClick(p.x,p.y);};
 const click=s=>()=>tap(s);
+const settingRange='#setting-tuning-rex-hp';
+const adjustSetting=()=>{const input=document.querySelector(settingRange),owner=tour;if(!input||!owner)return;const original=input.value,start=Number(original),target=start<Number(input.max)?Math.min(Number(input.max),start+.5):Math.max(Number(input.min),start-.5);
+ owner.restoreSetting=()=>{input.value=original;input.dispatchEvent(new Event('change',{bubbles:true}));};
+ return ease(STEP*.6,k=>{input.value=start+(target-start)*k;input.dispatchEvent(new Event('input',{bubbles:true}));});};
 
 // Every example: what to light up, whether it runs on the demo battle, and its steps (target, input, action).
 const DEMOS={
- count:{spot:['#matchSetup','.setup-summary'],follow:true,arena:true,icon:'[data-preset="20,20"]',steps:[{at:()=>document.querySelector('#matchSetup.is-collapsed .setup-summary')||document.querySelector('[data-preset="20,20"]'),input:'click',act:()=>{if(document.querySelector('#matchSetup.is-collapsed'))tap('.setup-summary');}},{at:'[data-preset="20,20"]',input:'click',act:click('[data-preset="20,20"]')},{at:'#randomSetup',input:'click',act:click('#randomSetup')}]},
- settings:{spot:['#settingsBtn','#matchSettingsBtn'],window:true,icon:'#settingsBtn',release:closeOtherDialogs,steps:[{at:'#settingsBtn',input:'click',act:click('#settingsBtn')}]},
+ count:{spot:['#matchSetup','.setup-summary'],follow:true,arena:true,icon:'[data-preset="20,20"]',steps:[{at:'.setup-summary',skipIf:()=>!document.querySelector('#matchSetup.is-collapsed'),input:'click',act:click('.setup-summary')},{at:'button[aria-label="티라노 한 마리 늘리기"]',input:'click',act:click('button[aria-label="티라노 한 마리 늘리기"]')},{at:'button[aria-label="티라노 한 마리 줄이기"]',input:'click',act:click('button[aria-label="티라노 한 마리 줄이기"]')},{at:'[data-preset="20,20"]',input:'click',act:click('[data-preset="20,20"]')},{at:'#randomSetup',input:'click',act:click('#randomSetup')}]},
+ settings:{spot:['#settingsDialog','#settingsBtn','#matchSettingsBtn'],window:true,hold:2400,icon:'#settingsBtn',release:()=>{tour?.restoreSetting?.();closeOtherDialogs();},steps:[{at:'#settingsBtn',input:'click',act:()=>{tap('#settingsBtn');tap('#settingsDialog .settings-category-tabs button');}},{at:settingRange,input:'drag',act:adjustSetting},{at:()=>document.querySelector('#settingsDialog button[aria-label="체력 다음 고정값으로"]'),input:'click',act:click('#settingsDialog button[aria-label="체력 다음 고정값으로"]')},{at:()=>document.querySelector('#settingsDialog button[aria-label="체력 이전 고정값으로"]'),input:'click',act:click('#settingsDialog button[aria-label="체력 이전 고정값으로"]')}]},
  // The intro window itself is used: open it, switch its tabs, rotate and zoom the model, then reset the view.
  info:{spot:['#characterDialog','.character-info-button[data-character-info="rex"]'],window:true,release:closeOtherDialogs,steps:[
   {at:'.character-info-button[data-character-info="rex"]',input:'click',act:click('.character-info-button[data-character-info="rex"]')},
@@ -72,7 +76,7 @@ const DEMOS={
   {at:'center',input:'rotate',act:()=>{const r=game(),y=r.yaw;return ease(STEP*.45,k=>{r.yaw=y+k*.8;});}},
   {at:'center',input:'wheel',act:()=>{const r=game(),z=r.zoom;return ease(STEP*.45,k=>r.changeZoom(z*(1+k*.55)));}},
   {at:'center',input:'dbl',act:()=>{const r=game();r?.toggleFocusZoom(r.width/2,r.height/2);}}]},
- select:{spot:['#trackedUnit',...ARENA],stage:'battle',steps:[{at:'unit',input:'click',act:clickUnit},{at:'#trackedUnit',input:'none'}]},
+ select:{spot:['#trackedUnit',...ARENA],arena:true,stage:'battle',steps:[{at:'unit',input:'click',act:clickUnit},{at:'#trackedUnit',input:'none'}]},
  speed:{spot:['.speed-options','#fsSpeed'],arena:true,stage:'battle',icon:'[data-speed="4"]',steps:['0.5','2','4'].map(v=>({at:`[data-speed="${v}"]`,input:'click',act:click(`[data-speed="${v}"]`)}))},
  sound:{spot:['#soundBtn','#fsSound'],icon:'#soundBtn',steps:[{at:'#soundBtn',input:'click',act:click('#soundBtn')},{at:'#soundBtn',input:'click',act:click('#soundBtn')}]},
  // Toggles are shown switching on: turned off first, then pressed.
@@ -148,6 +152,7 @@ function animatePointer(cursor,ripples,input){
  const path=points=>cursor.animate(points.map(([k,x,y,s=1,a=1])=>({offset:k,transform:at(x,y,s),opacity:a})),o);
  const ring=(el,k)=>el.animate([{offset:0,opacity:0,transform:'scale(.3)'},{offset:k,opacity:0,transform:'scale(.3)'},{offset:k+.02,opacity:.95,transform:'scale(.3)'},{offset:Math.min(.99,k+.3),opacity:0,transform:'scale(2.4)'},{offset:1,opacity:0,transform:'scale(2.4)'}],{duration:T});
  cursor.style.opacity=input==='none'?'0':'1';
+ if(input==='drag'&&tour?.button.dataset.demo==='settings'){const el=document.querySelector(settingRange);if(el){const w=el.getBoundingClientRect().width-16,min=Number(el.min),max=Number(el.max),v=Number(el.value),to=v<max?Math.min(max,v+.5):Math.max(min,v-.5),x=value=>-w/2+(value-min)/(max-min)*w;return path([[0,x(v),0],[.3,x(v),0,.85],[.9,x(to),0,.85],[1,x(to),0]]);}}
  if(input==='drag')return path([[0,60,30],[.3,60,30,.85],[.75,-60,30,.85],[.85,-60,30],[1,-60,30]]);
  if(input==='rotate')return path([[0,-45,35],[.3,-45,35,.85],[.5,0,50,.85],[.75,45,35,.85],[.85,45,35],[1,45,35]]);
  if(input==='wheel')return path([[0,0,0],[.35,0,-5],[.5,0,4],[.65,0,-5],[.8,0,4],[1,0,0]]);
@@ -157,9 +162,10 @@ function animatePointer(cursor,ripples,input){
 
 // Leaving an example fades it out while the guide fades back in (or the screen simply returns), at any moment.
 function endTour(back){if(!tour)return;const t=tour;tour=null;t.timers.forEach(clearTimeout);cancelAnimationFrame(t.raf);removeEventListener('keydown',t.key,true);removeEventListener('resize',t.resize);
+ t.restoreSetting?.();
  t.root?.querySelectorAll('.coach-cursor,.coach-ripple').forEach(e=>e.getAnimations().forEach(a=>a.cancel()));
  if(t.root?.matches(':popover-open'))t.root.hidePopover();
- document.documentElement.classList.remove('coach-room','coach-arena');document.documentElement.style.removeProperty('--coach-explanation-space');document.body.classList.remove('guide-coaching');t.root?.classList.add('is-leaving');setTimeout(()=>t.root?.remove(),reduced.matches?0:220);
+ document.documentElement.classList.remove('coach-room','coach-arena','coach-formation');document.documentElement.style.removeProperty('--coach-explanation-space');document.documentElement.style.removeProperty('--coach-formation-scale');document.body.classList.remove('guide-coaching');t.root?.classList.add('is-leaving');setTimeout(()=>t.root?.remove(),reduced.matches?0:220);
  if(t.stage)endStage(t.stage);
  if(back&&dialog){dialog.showModal();t.button.focus();t.button.classList.add('is-active');setTimeout(()=>t.button.classList.remove('is-active'),900);}}
 async function startTour(button){
@@ -170,6 +176,7 @@ async function startTour(button){
  // While an example runs, windows it opens leave a strip free at the bottom so the bubble never covers them.
  document.documentElement.classList.add('coach-room');document.body.classList.add('guide-coaching');
  document.documentElement.classList.toggle('coach-arena',!!demo.arena);
+ document.documentElement.classList.toggle('coach-formation',demo===DEMOS.count);
  me.stage=await beginStage(demo);if(tour!==me)return;
  const text=(coarse.matches?button.dataset.dm:button.dataset.dp)||button.dataset.d||'',title=button.querySelector('b')?.textContent||'';
  const root=document.createElement('div');root.className='coach';
@@ -187,6 +194,8 @@ async function startTour(button){
  // Bring the highlighted area into the device's viewport as the demonstration moves.
  // Scroll once per step, not every animation frame, so the spotlight can settle smoothly.
  const reveal=target=>{if(tour!==me)return;const focus=target instanceof Element&&shown(target)?target:first(demo.spot)||first(ARENA);if(!focus)return;
+  if(focus.closest('dialog[open]')){focus.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});return;}
+  if(demo!==DEMOS.count&&focus.closest('#matchSetup'))focus.scrollIntoView({block:'nearest',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});
   const area=demo.follow?focus:first(demo.spot)||focus,r=area.getBoundingClientRect(),view=window.visualViewport,h=view?.height||innerHeight,top=view?.offsetTop||0;
   const el=r.height>h-24?focus:area,room=(me.root?.querySelector('.coach-bubble')?.offsetHeight||220)+36;let q=el.getBoundingClientRect();
   if(demo.arena){const a=$('battlefield')?.getBoundingClientRect();if(a)q={left:Math.min(q.left,a.left),top:Math.min(q.top,a.top),right:Math.max(q.right,a.right),bottom:Math.max(q.bottom,a.bottom),height:Math.max(q.bottom,a.bottom)-Math.min(q.top,a.top)};}
@@ -195,8 +204,10 @@ async function startTour(button){
  const place=()=>{if(tour!==me)return;
   const activeDialog=[...document.querySelectorAll('dialog[open]:not(#helpDialog)')].find(shown);
   if(activeDialog!==me.activeDialog){me.activeDialog=activeDialog;me.rect=null;me.bubbleSide=null;}
-  const base=activeDialog||(demo.follow&&me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl:first(demo.spot)||first(ARENA));if(!base){me.raf=requestAnimationFrame(place);return;}
-  const s=base.getBoundingClientRect(),a=demo.arena&&!activeDialog?$('battlefield')?.getBoundingClientRect():null,pad=6;
+  if(demo===DEMOS.count){const panel=$('matchSetup'),key=innerWidth+':'+innerHeight+':'+$('largeBattleWarning')?.hidden;if(me.fitKey!==key){me.fitKey=key;document.documentElement.style.setProperty('--coach-formation-scale','1');const available=Math.max(220,innerHeight-bubble.offsetHeight-84);document.documentElement.style.setProperty('--coach-formation-scale',String(Math.min(1,available/Math.max(1,panel.offsetHeight))));}}
+  const base=activeDialog||(demo===DEMOS.count?$('matchSetup'):demo.follow&&me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl:first(demo.spot)||first(ARENA));if(!base){me.raf=requestAnimationFrame(place);return;}
+  const s=base.getBoundingClientRect(),a=demo.arena&&!activeDialog?$('battlefield')?.getBoundingClientRect():null;
+  const pad=6;
   // The battlefield joins the lit area only when both fit on screen together (fullscreen lights the whole view).
   const u=a&&{left:Math.min(s.left,a.left),top:Math.min(s.top,a.top),right:Math.max(s.right,a.right),bottom:Math.max(s.bottom,a.bottom)};
   let r=demo.full&&u?{left:Math.max(0,u.left),top:Math.max(0,u.top),right:Math.min(innerWidth,u.right),bottom:Math.min(innerHeight,u.bottom)}:u&&u.bottom-u.top<=innerHeight-24?u:{left:s.left,top:s.top,right:s.right,bottom:s.bottom};
@@ -224,7 +235,8 @@ async function startTour(button){
   if(px!=null)Object.assign(anchor.style,{left:px+'px',top:py+'px'});
   // Follow directly below the yellow frame, switching above when the bottom has no room.
   // Never crop or move the spotlight away from its target to make room for text.
-  const rect=spotEl.getBoundingClientRect(),layout=guideExplanationLayout(rect,bubble.offsetWidth,bubble.offsetHeight,{width:innerWidth,height:innerHeight},me.bubbleSide);
+  const protectedRects=[q,...(demo===DEMOS.count?[s]:[])];
+  const rect=spotEl.getBoundingClientRect(),layout=guideExplanationLayout(rect,bubble.offsetWidth,bubble.offsetHeight,{width:innerWidth,height:innerHeight},me.bubbleSide,protectedRects);
   me.bubbleSide=layout.side;Object.assign(bubble.style,{left:layout.left+'px',top:layout.top+'px'});
   bubble.classList.add('is-ready');
   me.raf=requestAnimationFrame(place);};
@@ -232,11 +244,12 @@ async function startTour(button){
  (demo.arena||demo.spot===ARENA?document.querySelector('.arena-panel'):first(demo.spot))?.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});
  // One loop: reset the stage, rest on the first target, then each step moves there, shows its input and acts.
  const loop=async()=>{if(tour!==me)return;await loopStage(demo,me.stage,me);if(tour!==me)return;
-  me.pointEl=resolve(demo.steps[0].at);reveal(me.pointEl);showInput(badge,null);cursor.style.opacity='1';
-  demo.steps.forEach((s,i)=>{const t0=STEP*(i+1);
+  const steps=demo.steps.filter(s=>!s.skipIf?.());
+  me.pointEl=resolve(steps[0].at);reveal(me.pointEl);showInput(badge,null);cursor.style.opacity='1';
+  steps.forEach((s,i)=>{const t0=STEP*(i+1);
    me.timers.push(setTimeout(()=>{if(tour!==me)return;me.pointEl=resolve(s.at);reveal(me.pointEl);showInput(badge,s.input);animatePointer(cursor,ripples,s.input);},t0-STEP*.45));
    if(s.act)me.timers.push(setTimeout(()=>{if(tour!==me)return;s.act();setTimeout(raise,80);},t0-STEP*.45+STEP*(['drag','rotate','wheel'].includes(s.input)?.3:s.input==='dbl'?.58:.5)));});
-  const total=STEP*(demo.steps.length+1)+(demo.hold??1800);
+  const total=STEP*(steps.length+1)+(demo.hold??1800);
   if(demo.release)me.timers.push(setTimeout(()=>tour===me&&demo.release(),total-STEP*.3));
   me.timers.push(setTimeout(loop,total));};
  place();loop();root.querySelector('.coach-back').focus({preventScroll:true});

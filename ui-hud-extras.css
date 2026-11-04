@@ -204,7 +204,13 @@ html.coach-room dialog[open]:not(#helpDialog){top:0;bottom:auto;margin-block:16p
 html body.guide-coaching .guide-fab,html body:has(dialog[open]) .guide-fab{display:none}
 /* Demonstrations leave room for the battlefield, its controls and the explanation together. */
 html.coach-arena #battlefield:not(.expanded):not(:fullscreen){height:clamp(200px,calc(100dvh - var(--coach-explanation-space,260px) - 170px),430px);min-height:200px}
-html.coach-arena #matchSetup{max-height:calc(100dvh - var(--coach-explanation-space,260px) - 64px);overflow:auto}
+html.coach-arena #matchSetup{max-height:none;overflow:visible}
+html.coach-formation #matchSetup{zoom:var(--coach-formation-scale,1);padding:12px}
+html.coach-formation #matchSetup .panel-title{margin-bottom:8px;padding-bottom:8px}
+html.coach-formation #matchSetup .count-row{margin-top:6px}
+html.coach-formation #matchSetup .presets{margin-top:8px}
+html.coach-formation #matchSetup .presets button{padding:5px 4px;min-height:28px}
+html.coach-room #settingsDialog .settings-help{display:none}
 html.coach-arena #battlefield.expanded{bottom:calc(var(--coach-explanation-space,260px) + 28px);height:auto;min-height:180px}
 html body .bottom-row .guide-fab{position:fixed;inset:auto 16px 16px auto;z-index:900}
 @media(max-width:600px){html body .bottom-row .guide-fab{right:12px;bottom:calc(12px + env(safe-area-inset-bottom))}}

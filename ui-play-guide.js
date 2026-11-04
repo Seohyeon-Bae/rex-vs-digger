@@ -3,6 +3,7 @@
 // indicator for the input in use), the real result appears, and every loop starts again from the same stage.
 // Closing the example puts the player's own setup back.
 import {icon} from './icons.js';
+import {guideExplanationLayout,smoothGuideProgress} from './guide-layout.js';
 
 const plain=body=>`<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${body}</svg>`;
 const frame='<path d="M3 8V4.5A1.5 1.5 0 0 1 4.5 3H8M16 3h3.5A1.5 1.5 0 0 1 21 4.5V8M21 16v3.5a1.5 1.5 0 0 1-1.5 1.5H16M8 21H4.5A1.5 1.5 0 0 1 3 19.5V16"/>';
@@ -35,7 +36,7 @@ const STEP=1700,DEMO_SIZE=5;
 
 // Where the pointer goes: a selector, a function, the unit nearest the battlefield centre, or the centre itself.
 const unitPoint=()=>{const r=game();if(!r)return null;const W=r.width/2,H=r.height/2;let best=null,d=Infinity;for(const u of r.battle.units){if(u.hp<=0)continue;const p=r.project(u.x,u.y+2,u.z),e=Math.hypot(p.x-W,p.y-H);if(e<d){d=e;best=p;}}return best;};
-const ease=(ms,step)=>new Promise(done=>{const t0=performance.now(),me=tour;const tick=now=>{if(tour!==me)return done();const k=Math.min(1,(now-t0)/ms);step(k);k<1?requestAnimationFrame(tick):done();};requestAnimationFrame(tick);});
+const ease=(ms,step)=>new Promise(done=>{const t0=performance.now(),me=tour;const tick=now=>{if(tour!==me)return done();const k=Math.min(1,(now-t0)/ms);step(smoothGuideProgress(k));k<1?requestAnimationFrame(tick):done();};requestAnimationFrame(tick);});
 // Real pointer and wheel input on a control (the character model canvas): a drag across, or a few wheel notches.
 const dragOn=(selector,dx,ms,shift)=>{const el=document.querySelector(selector);if(!el)return;const r=el.getBoundingClientRect(),x0=r.left+r.width/2-dx/2,y=r.top+r.height/2,id=77;
  const fire=(type,x)=>el.dispatchEvent(new PointerEvent(type,{bubbles:true,cancelable:true,pointerId:id,pointerType:'mouse',isPrimary:true,button:0,buttons:type==='pointerup'?0:1,clientX:x,clientY:y,shiftKey:shift}));
@@ -61,17 +62,17 @@ const DEMOS={
  start:{spot:['#startBtn','#fsPlay'],arena:true,stage:'ready',steps:[{at:'#startBtn',input:'click',act:click('#startBtn')}]},
  control:{spot:['.playback-left','#pauseBtn'],arena:true,stage:'battle',icon:'#pauseBtn',steps:[{at:'#pauseBtn',input:'click',act:click('#pauseBtn')},{at:'#pauseBtn',input:'click',act:click('#pauseBtn')},{at:'#resetBtn',input:'click',act:click('#resetBtn')},{at:'#stopBtn',input:'click',act:click('#stopBtn')}]},
  log:{spot:['#eventFeed'],stage:'battle',steps:[{at:'#eventFeed',input:'none'},{at:'#eventFeed',input:'none'}]},
- recent:{spot:['#historyBtn'],window:true,release:closeOtherDialogs,steps:[{at:'#historyBtn',input:'click',act:click('#historyBtn')}]},
+ recent:{spot:['#historyDialog','#historyBtn'],window:true,hold:3200,release:closeOtherDialogs,steps:[{at:'#historyBtn',input:'click',act:click('#historyBtn')},{at:'#historyDialog',input:'none'}]},
  camera:{spot:['.camera-controls'],arena:true,stage:'battle',icon:'#viewNext',
   steps:['#viewNext','#viewNext','#viewHome','#autoFollow','#autoFollow','#directorBtn'].map(s=>({at:s,input:'click',act:click(s)}))},
  // Real fullscreen needs the player's own click, so the game's expanded battlefield mode stands in for it.
  expand:{spot:['#fullscreenBtn','#fsExit'],arena:true,full:true,stage:'battle',icon:'#fullscreenBtn',steps:[{at:'#fullscreenBtn',input:'click',act:()=>$('battlefield')?.classList.add('expanded')}]},
  look:{spot:ARENA,stage:'battle',steps:[
-  {at:'center',input:'drag',act:()=>ease(STEP*.45,()=>game()?.panBy(-1.6,0))},
+  {at:'center',input:'drag',act:()=>{let previous=0;return ease(STEP*.45,k=>{game()?.panBy(-150*(k-previous),0);previous=k;});}},
   {at:'center',input:'rotate',act:()=>{const r=game(),y=r.yaw;return ease(STEP*.45,k=>{r.yaw=y+k*.8;});}},
   {at:'center',input:'wheel',act:()=>{const r=game(),z=r.zoom;return ease(STEP*.45,k=>r.changeZoom(z*(1+k*.55)));}},
   {at:'center',input:'dbl',act:()=>{const r=game();r?.toggleFocusZoom(r.width/2,r.height/2);}}]},
- select:{spot:ARENA,stage:'battle',steps:[{at:'unit',input:'click',act:clickUnit},{at:'#trackedUnit',input:'none'}]},
+ select:{spot:['#trackedUnit',...ARENA],stage:'battle',steps:[{at:'unit',input:'click',act:clickUnit},{at:'#trackedUnit',input:'none'}]},
  speed:{spot:['.speed-options','#fsSpeed'],arena:true,stage:'battle',icon:'[data-speed="4"]',steps:['0.5','2','4'].map(v=>({at:`[data-speed="${v}"]`,input:'click',act:click(`[data-speed="${v}"]`)}))},
  sound:{spot:['#soundBtn','#fsSound'],icon:'#soundBtn',steps:[{at:'#soundBtn',input:'click',act:click('#soundBtn')},{at:'#soundBtn',input:'click',act:click('#soundBtn')}]},
  // Toggles are shown switching on: turned off first, then pressed.
@@ -111,11 +112,10 @@ function setView(v){const r=game();if(!r)return;closeOtherDialogs();
  if($('soundBtn')?.getAttribute('aria-pressed')!==v.sound)tap('#soundBtn');
  $('battlefield')?.classList.toggle('expanded',!!v.expanded);}
 async function beginStage(demo){
- const saved=capture(),own=saved.state&&!['ready','ended'].includes(saved.state);
+ const saved=capture();
  saved.setupCollapsed=$('matchSetup')?.classList.contains('is-collapsed');
- // A battle the player is in the middle of is never replaced; the example then uses it as it is.
- if(own||!demo.stage)return{saved,staged:false};
- if(saved.state==='ended')tap('#stopBtn');
+ // Every tour owns a clean demonstration; ongoing fights never leak into its scene.
+ if(state()!=='ready')tap('#stopBtn');
  setCounts(DEMO_SIZE,DEMO_SIZE);await wait(260);
  const r=game();if(r?.cameraMode==='field')tap('#viewHome');
  const base={...capture(),follow:true,director:false,speed:1,showHealth:true,shake:true,expanded:false};setView(base);base.camera=game()?.captureCamera?.();
@@ -123,9 +123,10 @@ async function beginStage(demo){
 }
 async function loopStage(demo,stage){
  if(stage.staged){
-  if(demo.stage==='ready'){if(state()!=='ready')tap('#stopBtn');}
+  if(demo.stage!=='battle'){if(state()!=='ready')tap('#stopBtn');setCounts(DEMO_SIZE,DEMO_SIZE);await wait(260);}
   else if(state()==='ready')tap('#startBtn');else tap('#resetBtn');
   await wait(120);setView(stage.base);
+  if(demo===DEMOS.count&&stage.saved.setupCollapsed&&!$('matchSetup')?.classList.contains('is-collapsed'))tap('.setup-summary');
  }else{closeOtherDialogs();if(demo===DEMOS.count)setCounts(stage.saved.rex,stage.saved.dig);if(demo===DEMOS.sound&&$('soundBtn')?.getAttribute('aria-pressed')!==stage.saved.sound)tap('#soundBtn');}
  demo.before?.(game());
 }
@@ -142,6 +143,7 @@ const INPUTS={
 };
 function showInput(badge,input){const set=INPUTS[input];if(!set){badge.hidden=true;return;}const [pic,text]=coarse.matches?set.touch:set.pc;badge.hidden=false;badge.innerHTML=`${pic.startsWith('<svg')?pic:icon(pic)}<span>${text}</span>`;}
 function animatePointer(cursor,ripples,input){
+ [cursor,...ripples].forEach(el=>el.getAnimations().forEach(a=>a.cancel()));
  if(reduced.matches)return;const T=STEP,at=(x,y,s=1)=>`translate(${x}px,${y}px) scale(${s})`,o={duration:T,easing:'ease-in-out',fill:'forwards'};
  const path=points=>cursor.animate(points.map(([k,x,y,s=1,a=1])=>({offset:k,transform:at(x,y,s),opacity:a})),o);
  const ring=(el,k)=>el.animate([{offset:0,opacity:0,transform:'scale(.3)'},{offset:k,opacity:0,transform:'scale(.3)'},{offset:k+.02,opacity:.95,transform:'scale(.3)'},{offset:Math.min(.99,k+.3),opacity:0,transform:'scale(2.4)'},{offset:1,opacity:0,transform:'scale(2.4)'}],{duration:T});
@@ -155,7 +157,7 @@ function animatePointer(cursor,ripples,input){
 
 // Leaving an example fades it out while the guide fades back in (or the screen simply returns), at any moment.
 function endTour(back){if(!tour)return;const t=tour;tour=null;t.timers.forEach(clearTimeout);cancelAnimationFrame(t.raf);removeEventListener('keydown',t.key,true);removeEventListener('resize',t.resize);
- document.documentElement.classList.remove('coach-room');t.root?.classList.add('is-leaving');setTimeout(()=>t.root?.remove(),reduced.matches?0:220);
+ document.documentElement.classList.remove('coach-room');document.documentElement.style.removeProperty('--coach-explanation-space');document.body.classList.remove('guide-coaching');t.root?.classList.add('is-leaving');setTimeout(()=>t.root?.remove(),reduced.matches?0:220);
  if(t.stage)endStage(t.stage);
  if(back&&dialog){dialog.showModal();t.button.focus();t.button.classList.add('is-active');setTimeout(()=>t.button.classList.remove('is-active'),900);}}
 async function startTour(button){
@@ -164,7 +166,7 @@ async function startTour(button){
  dialog.close();
  const me={button,timers:[],started:performance.now(),bubbleSet:false,pointEl:null};tour=me;
  // While an example runs, windows it opens leave a strip free at the bottom so the bubble never covers them.
- document.documentElement.classList.add('coach-room');
+ document.documentElement.classList.add('coach-room');document.body.classList.add('guide-coaching');
  me.stage=await beginStage(demo);if(tour!==me)return;
  const text=(coarse.matches?button.dataset.dm:button.dataset.dp)||button.dataset.d||'',title=button.querySelector('b')?.textContent||'';
  const root=document.createElement('div');root.className='coach';
@@ -186,7 +188,9 @@ async function startTour(button){
   if(q.height<h-room&&q.bottom+room>top+h&&q.top>top+12)window.scrollBy({top:q.top-top-18,behavior:reduced.matches?'auto':'smooth'});
   else if(q.top<top+12||q.bottom>top+h-12||q.left<0||q.right>innerWidth)el.scrollIntoView({block:'center',inline:'nearest',behavior:reduced.matches?'auto':'smooth'});};
  const place=()=>{if(tour!==me)return;
-  const base=demo.follow&&me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl:first(demo.spot)||first(ARENA);if(!base){me.raf=requestAnimationFrame(place);return;}
+  const activeDialog=[...document.querySelectorAll('dialog[open]:not(#helpDialog)')].find(shown);
+  if(activeDialog!==me.activeDialog){me.activeDialog=activeDialog;me.rect=null;me.bubbleSide=null;}
+  const base=activeDialog||(demo.follow&&me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl:first(demo.spot)||first(ARENA));if(!base){me.raf=requestAnimationFrame(place);return;}
   const s=base.getBoundingClientRect(),a=demo.arena?first(ARENA)?.getBoundingClientRect():null,pad=6;
   // The battlefield joins the lit area only when both fit on screen together (fullscreen lights the whole view).
   const u=a&&{left:Math.min(s.left,a.left),top:Math.min(s.top,a.top),right:Math.max(s.right,a.right),bottom:Math.max(s.bottom,a.bottom)};
@@ -194,12 +198,14 @@ async function startTour(button){
   // Leave enough room for the explanation; on phones highlight the control rather than a tall combined area.
   const margin=10,gap=12; bubble.style.width=Math.min(340,innerWidth-margin*2)+'px';
   const bubbleHeight=bubble.offsetHeight,maxArea=Math.max(50,innerHeight-bubbleHeight-gap-margin*2);
-  const q=me.pointEl instanceof Element&&shown(me.pointEl)?me.pointEl.getBoundingClientRect():s;
+  document.documentElement.style.setProperty('--coach-explanation-space',bubbleHeight+40+'px');
+  const q=me.pointEl instanceof Element&&shown(me.pointEl)&&(!activeDialog||activeDialog.contains(me.pointEl))?me.pointEl.getBoundingClientRect():s;
   const required={left:Math.min(s.left,q.left),top:Math.min(s.top,q.top),right:Math.max(s.right,q.right),bottom:Math.max(s.bottom,q.bottom)};
   if(r.bottom-r.top>maxArea)r=required;
   else r={left:Math.min(r.left,required.left),top:Math.min(r.top,required.top),right:Math.max(r.right,required.right),bottom:Math.max(r.bottom,required.bottom)};
   // The lit frame and the dark panels move together on a critically damped spring: a soft start, no overshoot.
-  const goal=[r.left-pad,r.top-pad,r.right+pad,r.bottom+pad],now=performance.now(),dt=Math.min(.05,(now-(me.at??now))/1000),w=8.5;me.at=now;
+  const goal=[r.left-pad,r.top-pad,r.right+pad,r.bottom+pad],now=performance.now(),dt=Math.min(.05,(now-(me.at??now))/1000),w=12;me.at=now;
+  if(me.rect){const dx=scrollX-(me.scrollX??scrollX),dy=scrollY-(me.scrollY??scrollY);me.rect=me.rect.map((v,i)=>v-(i%2?dy:dx));}me.scrollX=scrollX;me.scrollY=scrollY;
   if(!me.rect||reduced.matches){me.rect=goal.slice();me.vel=[0,0,0,0];}else for(let i=0;i<4;i++){me.vel[i]+=(w*w*(goal[i]-me.rect[i])-2*w*me.vel[i])*dt;me.rect[i]+=me.vel[i]*dt;}
   // While the border eases to its next position, expand its bounds to keep the actual target inside at every frame.
   const [L,T,R,B]=[Math.min(me.rect[0],goal[0]),Math.min(me.rect[1],goal[1]),Math.max(me.rect[2],goal[2]),Math.max(me.rect[3],goal[3])];Object.assign(spotEl.style,{left:L+'px',top:T+'px',width:R-L+'px',height:B-T+'px'});
@@ -207,19 +213,13 @@ async function startTour(button){
   let px=null,py=null;const cv=first(ARENA)?.getBoundingClientRect();
   if(me.pointEl==='unit'){const p=unitPoint(),c=game()?.canvas.getBoundingClientRect();if(p&&c){px=c.left+p.x;py=c.top+p.y;}}
   else if(me.pointEl==='center'&&cv){px=cv.left+cv.width/2;py=cv.top+cv.height/2;}
-  else if(me.pointEl instanceof Element){const q=me.pointEl.getBoundingClientRect();px=q.left+q.width/2;py=q.top+q.height/2;}
+  else if(me.pointEl instanceof Element&&(!activeDialog||activeDialog.contains(me.pointEl))){const q=me.pointEl.getBoundingClientRect();px=q.left+q.width/2;py=q.top+q.height/2;}
+  anchor.style.visibility=activeDialog&&!(me.pointEl instanceof Element&&activeDialog.contains(me.pointEl))?'hidden':'visible';
   if(px!=null)Object.assign(anchor.style,{left:px+'px',top:py+'px'});
   // Follow directly below the yellow frame, switching above when the bottom has no room.
   // Never crop or move the spotlight away from its target to make room for text.
-  const rect=spotEl.getBoundingClientRect(),W=bubble.offsetWidth,H=bubble.offsetHeight,m=10,gapY=12;
-  let top=rect.bottom+gapY;
-  let left=Math.max(m,Math.min(innerWidth-W-m,(L+R-W)/2));
-  if(innerWidth>=900&&rect.right+gapY+W<=innerWidth-m){left=rect.right+gapY;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}
-  else if(innerWidth>=900&&rect.left-gapY-W>=m){left=rect.left-gapY-W;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}
-  else if(top+H>innerHeight-m){if(rect.top-gapY-H>=m)top=rect.top-gapY-H;
-   else if(rect.right+gapY+W<=innerWidth-m){left=rect.right+gapY;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}
-   else if(rect.left-gapY-W>=m){left=rect.left-gapY-W;top=Math.max(m,Math.min(innerHeight-H-m,rect.top));}}
-  Object.assign(bubble.style,{left:left+'px',top:top+'px'});
+  const rect=spotEl.getBoundingClientRect(),layout=guideExplanationLayout(rect,bubble.offsetWidth,bubble.offsetHeight,{width:innerWidth,height:innerHeight},me.bubbleSide);
+  me.bubbleSide=layout.side;Object.assign(bubble.style,{left:layout.left+'px',top:layout.top+'px'});
   bubble.classList.add('is-ready');
   me.raf=requestAnimationFrame(place);};
  // Examples that change the battle view are scrolled so the battlefield itself is centred.
@@ -230,13 +230,13 @@ async function startTour(button){
   demo.steps.forEach((s,i)=>{const t0=STEP*(i+1);
    me.timers.push(setTimeout(()=>{if(tour!==me)return;me.pointEl=resolve(s.at);reveal(me.pointEl);showInput(badge,s.input);animatePointer(cursor,ripples,s.input);},t0-STEP*.45));
    if(s.act)me.timers.push(setTimeout(()=>{if(tour!==me)return;s.act();setTimeout(raise,80);},t0-STEP*.45+STEP*(['drag','rotate','wheel'].includes(s.input)?.3:s.input==='dbl'?.58:.5)));});
-  const total=STEP*(demo.steps.length+1);
+  const total=STEP*(demo.steps.length+1)+(demo.hold??1800);
   if(demo.release)me.timers.push(setTimeout(()=>tour===me&&demo.release(),total-STEP*.3));
   me.timers.push(setTimeout(loop,total));};
  place();loop();root.querySelector('.coach-back').focus({preventScroll:true});
 }
 dialog?.addEventListener('click',e=>{const b=e.target.closest('.guide-tiles button');if(b&&DEMOS[b.dataset.demo])startTour(b);});
-if(dialog)new MutationObserver(()=>{if(dialog.open)copyLiveControls();}).observe(dialog,{attributes:true,attributeFilter:['open']});
+if(dialog)new MutationObserver(()=>{if(dialog.open){if(state()!=='ready')tap('#stopBtn');copyLiveControls();}}).observe(dialog,{attributes:true,attributeFilter:['open']});
 
 // The one launcher: always visible in the corner of the screen (the header ? button is hidden, still used to open the dialog).
 {const fab=document.createElement('button');fab.type='button';fab.className='guide-fab';fab.setAttribute('aria-label','플레이 가이드');fab.innerHTML='<span aria-hidden="true">?</span><b>플레이 가이드</b>';

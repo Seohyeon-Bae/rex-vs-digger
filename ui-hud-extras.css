@@ -191,3 +191,9 @@ html body .guide-dialog .guide-tiles b{font-size:11.5px;line-height:1.25}
 .coach-bubble p,.coach-bubble.is-compact p{margin:0 0 16px;color:#2f3829;word-break:keep-all}
 .coach-actions,.coach-bubble.is-compact .coach-actions{display:flex;justify-content:flex-end;gap:8px;margin:0}
 .coach-actions button,.coach-bubble.is-compact .coach-actions button{font-size:13.5px;padding:9px 16px}
+/* Reserve space below the real dialog, so its contents and the explanation never share a rectangle. */
+html.coach-room dialog[open]:not(#helpDialog){top:0;bottom:auto;margin-block:16px 0;max-height:calc(100dvh - var(--coach-explanation-space,260px) - 48px);overflow:auto;box-sizing:border-box}
+.coach-anchor{transition:left .22s ease-out,top .22s ease-out}
+.coach-bubble{max-height:calc(100dvh - 24px);overflow:auto;overscroll-behavior:contain}
+html body.guide-coaching .guide-fab,html body:has(dialog[open]) .guide-fab{display:none}
+@media(prefers-reduced-motion:reduce){.coach-anchor{transition:none}}

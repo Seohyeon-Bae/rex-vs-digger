@@ -66,9 +66,9 @@ const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const angle=x=>Math.atan2(Math.sin(x),Math.cos(x));
 // A rebuilt uniform grid narrows broad-phase searches; exact hit tests stay unchanged.
 export class SpatialGrid {
-  constructor(units,size=8){this.size=size;this.cells=new Map();this.queryCache=new Map();this.byId=[];for(const u of units){this.byId[u.id]=u;const key=this.key(Math.floor(u.x/size),Math.floor(u.z/size));let cell=this.cells.get(key);if(!cell)this.cells.set(key,cell=[]);cell.push(u);}}
+  constructor(units,size=8){this.size=size;this.cells=new Map();this.queryCache=new Map();this.unorderedCache=new Map();this.byId=[];for(const u of units){this.byId[u.id]=u;const key=this.key(Math.floor(u.x/size),Math.floor(u.z/size));let cell=this.cells.get(key);if(!cell)this.cells.set(key,cell=[]);cell.push(u);}}
   key(x,z){return x*65536+z;}
-  query(x,z,r,team=null,ordered=true){const s=this.size,x0=Math.floor((x-r)/s),x1=Math.floor((x+r)/s),z0=Math.floor((z-r)/s),z1=Math.floor((z+r)/s),key=ordered?((((x0+512)*1024+x1+512)*1024+z0+512)*1024+z1+512)*4+(team==='rex'?1:team==='dig'?2:team?3:0):null,cached=ordered?this.queryCache.get(key):null;if(cached)return cached;const out=[];for(let a=x0;a<=x1;a++)for(let b=z0;b<=z1;b++){const cell=this.cells.get(this.key(a,b));if(cell)for(const u of cell)if(!team||u.team===team)out.push(u);}if(ordered){if(out.length>1){const ids=new Int32Array(out.length);for(let i=0;i<out.length;i++)ids[i]=out[i].id;ids.sort();for(let i=0;i<out.length;i++)out[i]=this.byId[ids[i]];}if(this.queryCache.size<4096)this.queryCache.set(key,out);}return out;}
+  query(x,z,r,team=null,ordered=true){const s=this.size,x0=Math.floor((x-r)/s),x1=Math.floor((x+r)/s),z0=Math.floor((z-r)/s),z1=Math.floor((z+r)/s),key=((((x0+512)*1024+x1+512)*1024+z0+512)*1024+z1+512)*4+(team==='rex'?1:team==='dig'?2:team?3:0),cache=ordered?this.queryCache:this.unorderedCache,cached=cache.get(key);if(cached)return cached;const out=[];for(let a=x0;a<=x1;a++)for(let b=z0;b<=z1;b++){const cell=this.cells.get(this.key(a,b));if(cell)for(const u of cell)if(!team||u.team===team)out.push(u);}if(ordered&&out.length>1){const ids=new Int32Array(out.length);for(let i=0;i<out.length;i++)ids[i]=out[i].id;ids.sort();for(let i=0;i<out.length;i++)out[i]=this.byId[ids[i]];}if(cache.size<4096)cache.set(key,out);return out;}
 }
 export class Battle {
   constructor(config) {
@@ -210,7 +210,7 @@ export class Battle {
       }
     }
   }
-  nearby(x,z,r){return this.spatial?this.spatial.query(x,z,r):this.units;}
+  nearby(x,z,r,team=null){return this.spatial?this.spatial.query(x,z,r,team):this.units;}
   isolatedDigger(v){if(v.team!=='dig')return false;const cached=this.isolationCache?.get(v.id);if(cached!==undefined)return cached;const isolated=!this.nearby(v.x,v.z,10).some(other=>other!==v&&other.team==='dig'&&other.hp>0&&Math.hypot(other.x-v.x,other.z-v.z)<10);this.isolationCache?.set(v.id,isolated);return isolated;}
   buildSpatial(){this.spatial=new SpatialGrid(this.units.filter(u=>u.hp>0||this.time-u.deadAt<=4));}
   setTarget(u,id){if(this.assignments&&u.target!==id){const m=this.assignments[u.team];if(u.target!==null)m.set(u.target,Math.max(0,(m.get(u.target)||0)-1));if(id!==null)m.set(id,(m.get(id)||0)+1);}u.target=id;}
@@ -345,7 +345,7 @@ export class Battle {
       if(!route&&dist>3.2&&dist<8&&target.team==='dig'&&target.lastBucketParrySource!==u.id&&this.time-(target.lastBucketParryAt??-Infinity)<.65){const tip=bucketWorld(target,0),cross=(tip.x-target.x)*(u.z-target.z)-(tip.z-target.z)*(u.x-target.x);orbit+=(Math.sign(cross)||u.side)*1.8*awareness;advance=Math.max(advance,moveSpeed*.65);intent='press_guard_gap';}
       if(dist>7&&Math.abs(angle(Math.atan2(dz,dx)-u.yaw))<.7)advance*=1.45;
       if(dist>5.2&&Math.abs(angle(Math.atan2(dz,dx)-u.yaw))<.5)advance*=1+.2*(u.charge||0);
-      if(dist>3.7){let avoid=0,blockage=0,left=0,right=0;for(const ally of this.nearby(u.x,u.z,6)){if(ally===u||ally.team!=='rex'||ally.hp<=0||ally.y>1)continue;
+      if(dist>3.7){let avoid=0,blockage=0,left=0,right=0;for(const ally of this.nearby(u.x,u.z,6,'rex')){if(ally===u||ally.team!=='rex'||ally.hp<=0||ally.y>1)continue;
         const ax=ally.x-u.x,az=ally.z-u.z,along=ax*nx+az*nz,cross=-ax*nz+az*nx;
         if(along>.2&&along<4.5&&Math.abs(cross)<2.5){avoid-=Math.sign(cross||-u.side)*(1-along/5)*(1-Math.abs(cross)/3);if(along<2.8)blockage++;}
         if(along>-.5&&along<5){if(cross>0&&cross<4)left+=1-along/6;else if(cross<=0&&cross>-4)right+=1-along/6;}}
@@ -379,7 +379,7 @@ export class Battle {
     advance*=plan?.pace||1;orbit*=plan?.orbit||1;
     const flank=route&&intent!=='spread'?0:dist<s.range+5||intent==='spread'?orbit:u.side*.35;
     let vx=nx*advance-nz*flank,vz=nz*advance+nx*flank;
-    if(u.team==='dig'&&!route&&dist<13){const allies=this.nearby(u.x,u.z,14).filter(v=>v!==u&&v.team==='dig'&&v.hp>0&&v.heldBy===null&&v.y<1&&(v.x-u.x)**2+(v.z-u.z)**2<196);if(allies.length>0&&allies.length<=4){allies.sort((a,b)=>(a.x-u.x)**2+(a.z-u.z)**2-((b.x-u.x)**2+(b.z-u.z)**2));const close=allies.slice(0,2),cx=close.reduce((s,v)=>s+v.x,0)/close.length-u.x,cz=close.reduce((s,v)=>s+v.z,0)/close.length-u.z,spacing=Math.hypot(cx,cz);if(spacing>5){const pull=Math.min(moveSpeed*.65,(spacing-5)*.7);vx+=cx/spacing*pull;vz+=cz/spacing*pull;intent='cover_allies';}}}
+    if(u.team==='dig'&&!route&&dist<13){const allies=[];for(const v of this.nearby(u.x,u.z,14,'dig'))if(v!==u&&v.team==='dig'&&v.hp>0&&v.heldBy===null&&v.y<1&&(v.x-u.x)**2+(v.z-u.z)**2<196){allies.push(v);if(allies.length===5)break;}if(allies.length>0&&allies.length<=4){allies.sort((a,b)=>(a.x-u.x)**2+(a.z-u.z)**2-((b.x-u.x)**2+(b.z-u.z)**2));const close=allies.slice(0,2),cx=close.reduce((s,v)=>s+v.x,0)/close.length-u.x,cz=close.reduce((s,v)=>s+v.z,0)/close.length-u.z,spacing=Math.hypot(cx,cz);if(spacing>5){const pull=Math.min(moveSpeed*.65,(spacing-5)*.7);vx+=cx/spacing*pull;vz+=cz/spacing*pull;intent='cover_allies';}}}
 
     if(u.team==='dig'&&Math.max(Math.abs(u.x),Math.abs(u.z))>this.radius-5&&(vx*u.x+vz*u.z)>0){
       // Leave the wall along the open side; do not reverse direction every frame.
@@ -392,14 +392,14 @@ export class Battle {
         if(u.gapPhase==='gather'&&u.gapPoint&&Math.hypot(u.gapPoint.x-u.x,u.gapPoint.z-u.z)<3.1)u.breached=true;
         const phase=u.breached?'spread':'gather',order=group.commander;
         if(u.gapPhase!==phase||this.time>=(u.gapUntil||0)||u.gapPoint&&Math.hypot(u.gapPoint.x-u.x,u.gapPoint.z-u.z)<2){
-          const machines=this.nearby(u.x,u.z,17).filter(v=>v.team==='dig'&&v.hp>0&&v.y<1&&Math.hypot(v.x-u.x,v.z-u.z)<17).sort((a,b)=>Math.hypot(a.x-u.x,a.z-u.z)-Math.hypot(b.x-u.x,b.z-u.z)).slice(0,9);
-          const allies=this.nearby(u.x,u.z,18).filter(v=>v!==u&&v.team==='rex'&&v.hp>0&&v.gapPoint&&v.gapUntil>this.time);
-          let best=null,bestScore=-Infinity;
+          const machines=this.nearby(u.x,u.z,17,'dig').filter(v=>v.team==='dig'&&v.hp>0&&v.y<1).map(v=>({v,d:Math.hypot(v.x-u.x,v.z-u.z)})).filter(p=>p.d<17).sort((a,b)=>a.d-b.d).slice(0,9).map(p=>p.v);
+          const allies=this.nearby(u.x,u.z,18,'rex').filter(v=>v!==u&&v.team==='rex'&&v.hp>0&&v.gapPoint&&v.gapUntil>this.time);
+          let best=null,bestScore=-Infinity;const direction=(u.id%4)*Math.PI/2,spreadCos=Math.cos(direction),spreadSin=Math.sin(direction);
           for(let i=0;i<machines.length;i++)for(let j=i+1;j<machines.length;j++){
             const a=machines[i],b=machines[j],width=Math.hypot(a.x-b.x,a.z-b.z);if(width<6.1||width>14)continue;
             const x=(a.x+b.x)/2,z=(a.z+b.z)/2,d=Math.hypot(x-u.x,z-u.z);if(d<2||d>14)continue;
             let clearance=Infinity;for(const m of machines)clearance=Math.min(clearance,Math.hypot(x-m.x,z-m.z));if(clearance<3)continue;
-            const forward=((x-u.x)*nx+(z-u.z)*nz)/d,claimed=phase==='spread'?allies.reduce((n,v)=>n+(Math.hypot(x-v.gapPoint.x,z-v.gapPoint.z)<4?1:0),0):0,bias=Math.sin((u.id+1)*12.9898+(a.id+1)*.41+(b.id+1)*.73)*.35,direction=(u.id%4)*Math.PI/2,spread=((x-u.x)*Math.cos(direction)+(z-u.z)*Math.sin(direction))/d,score=clearance*.6+forward*(phase==='spread'?1.5:4)+(phase==='spread'?spread*5:0)-d*.12-claimed*2.4+bias;if(score>bestScore){bestScore=score;best={x,z};}
+            const forward=((x-u.x)*nx+(z-u.z)*nz)/d,claimed=phase==='spread'?allies.reduce((n,v)=>n+(Math.hypot(x-v.gapPoint.x,z-v.gapPoint.z)<4?1:0),0):0,bias=Math.sin((u.id+1)*12.9898+(a.id+1)*.41+(b.id+1)*.73)*.35,spread=((x-u.x)*spreadCos+(z-u.z)*spreadSin)/d,score=clearance*.6+forward*(phase==='spread'?1.5:4)+(phase==='spread'?spread*5:0)-d*.12-claimed*2.4+bias;if(score>bestScore){bestScore=score;best={x,z};}
           }
           if(phase==='gather'){const leader=this.units[order.leaderId];if(leader===u&&best)order.sharedGap={...best,until:this.time+.8};const shared=order.sharedGap;if(shared&&shared.until>this.time&&Math.hypot(shared.x-u.x,shared.z-u.z)<14)best={x:shared.x,z:shared.z};else if(best)order.sharedGap={...best,until:this.time+.8};}
           u.gapPoint=best;u.gapUntil=this.time+.8;u.gapPhase=phase;
@@ -407,16 +407,16 @@ export class Battle {
         if(u.gapPoint){const dx=u.gapPoint.x-u.x,dz=u.gapPoint.z-u.z,d=Math.hypot(dx,dz)||1;const push=6.2*(.4+.6*awareness)*this.config.tuning.rex.breakthrough;vx=vx*.45+dx/d*push;vz=vz*.45+dz/d*push;intent='infiltrate';}
       }
       if(u.enteredCombat&&level>=3&&dist>5&&dist<12&&this.isolatedDigger(target)){const desired=(u.id%4)*Math.PI/2,polar=Math.atan2(u.z-target.z,u.x-target.x),orbit=-clamp(angle(desired-polar),-1,1)*2.2*awareness;vx-=nz*orbit;vz+=nx*orbit;intent='surround';}
-      let sx=0,sz=0;for(const ally of this.nearby(u.x,u.z,4.2)){if(ally===u||ally.team!=='rex'||ally.hp<=0||ally.y>1)continue;const ax=u.x-ally.x,az=u.z-ally.z,d=Math.hypot(ax,az);if(d>.01&&d<4.2){sx+=ax/d*(4.2-d);sz+=az/d*(4.2-d);}}
+      let sx=0,sz=0;for(const ally of this.nearby(u.x,u.z,4.2,'rex')){if(ally===u||ally.team!=='rex'||ally.hp<=0||ally.y>1)continue;const ax=u.x-ally.x,az=u.z-ally.z;if(Math.abs(ax)>=4.2||Math.abs(az)>=4.2)continue;const d=Math.hypot(ax,az);if(d>.01&&d<4.2){sx+=ax/d*(4.2-d);sz+=az/d*(4.2-d);}}
       const length=Math.hypot(sx,sz),scale=length>2?2/length:1;vx+=sx*scale;vz+=sz*scale;
       const speed=Math.hypot(vx,vz),limit=moveSpeed*(dist>7?1.65:1.1);if(speed>limit){vx*=limit/speed;vz*=limit/speed;}
     }
     if(u.team==='dig'&&group?.split){
       // Crossing threats force separate defensive lanes instead of pulling the whole army inward.
       const local=this.nearby(u.x,u.z,12);let tx=0,tz=0,threats=0;
-      for(const v of local)if(v.team==='rex'&&v.hp>0){const dx=v.x-u.x,dz=v.z-u.z,d=Math.hypot(dx,dz);if(d>.01&&d<12){tx+=dx/d;tz+=dz/d;threats++;}}
+      for(const v of local)if(v.team==='rex'&&v.hp>0){const dx=v.x-u.x,dz=v.z-u.z;if(Math.abs(dx)>=12||Math.abs(dz)>=12)continue;const d=Math.hypot(dx,dz);if(d>.01&&d<12){tx+=dx/d;tz+=dz/d;threats++;}}
       const surrounded=threats>=2&&Math.hypot(tx,tz)/threats<.87,spacing=(surrounded?4.4:threats?4.2:4.4)*(1+awareness*(this.config.tuning.dig.defense-1)*.4);let sx=0,sz=0;
-      for(const ally of local)if(ally!==u&&ally.team==='dig'&&ally.hp>0){const dx=u.x-ally.x,dz=u.z-ally.z,d=Math.hypot(dx,dz);if(d>.01&&d<spacing){sx+=dx/d*(spacing-d);sz+=dz/d*(spacing-d);}}
+      for(const ally of local)if(ally!==u&&ally.team==='dig'&&ally.hp>0){const dx=u.x-ally.x,dz=u.z-ally.z;if(Math.abs(dx)>=spacing||Math.abs(dz)>=spacing)continue;const d=Math.hypot(dx,dz);if(d>.01&&d<spacing){sx+=dx/d*(spacing-d);sz+=dz/d*(spacing-d);}}
       const length=Math.hypot(sx,sz),cap=surrounded?moveSpeed*.4:1,scale=length>cap?cap/length:1;vx+=sx*scale;vz+=sz*scale;if(surrounded)intent='break_encirclement';
       const speed=Math.hypot(vx,vz);if(speed>moveSpeed){vx*=moveSpeed/speed;vz*=moveSpeed/speed;}
     }
